@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /* =====================================================
-       KPI CARDS
+       KPI CARD HOVER
        ===================================================== */
 
     const kpiCards = dashboard.querySelectorAll(".kpi-card");
@@ -51,10 +51,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
             console.log("SCAS Report clicked");
 
-            /*
-             * Add SCAS Report action here later.
-             */
-
         });
 
     }
@@ -75,468 +71,406 @@ document.addEventListener("DOMContentLoaded", function () {
 
             console.log("Currency selector clicked");
 
-            /*
-             * Currency functionality can be added here later.
-             */
-
         });
 
     });
 
 
     /* =====================================================
-       GET USERNAME
-       ===================================================== */
-
-    let currentUsername = "";
-
-    try {
-
-        if (typeof username !== "undefined") {
-            currentUsername = username;
-        }
-
-    } catch (e) {
-
-        console.warn("Username not available.");
-
-    }
-
-
-    /* =====================================================
        LOAD SUMMARY CARD DATA
        ===================================================== */
 
-    function loadSummaryCardData() {
+    function loadSummaryCards() {
 
-        try {
+        const params = {
 
-            /*
-             * Get Axpert caller
-             */
+            adsNames: ["summary_cards_plugin"],
 
-            const caller =
-                (typeof parent !== "undefined" &&
-                 typeof parent.AxGetSqlData === "function")
-                    ? parent
-                    : window;
+            refreshCache: false,
 
+            sqlParams: {},
 
-            /*
-             * Call Axpert data source
-             */
-
-            const resultStr = caller.AxGetSqlData(
-                "summary_cards_plugin",
-                {
-                   
-                }
-            );
-
-
-            console.log(
-                "summary_cards_plugin raw response:",
-                resultStr
-            );
-
-
-            /*
-             * Parse response
-             */
-
-            const parsed =
-                typeof resultStr === "string"
-                    ? JSON.parse(resultStr)
-                    : resultStr;
-
-
-            console.log(
-                "summary_cards_plugin parsed response:",
-                parsed
-            );
-
-
-            /*
-             * Validate response
-             */
-
-            if (
-                !parsed ||
-                !parsed.result ||
-                !parsed.result[0] ||
-                !parsed.result[0].result
-            ) {
-
-                console.error(
-                    "Invalid response from summary_cards_plugin."
-                );
-
-                return;
+            props: {
+                ADS: true,
+                pageno: 1,
+                pagesize: 500
             }
 
-
-            /*
-             * Get rows
-             */
-
-            const rows =
-                parsed.result[0].result.row;
+        };
 
 
-            console.log(
-                "summary_cards_plugin rows:",
-                rows
-            );
+        const caller =
+            (typeof parent !== "undefined" &&
+             parent.GetDataFromAxList)
+                ? parent
+                : window;
 
 
-            if (!rows || rows.length === 0) {
-
-                console.warn(
-                    "No data returned from summary_cards_plugin."
-                );
-
-                return;
-            }
-
-
-            /* =================================================
-               GET FIRST SUMMARY ROW
-               ================================================= */
-
-            const data = rows[0];
-
-
-            console.log(
-                "Summary data row:",
-                data
-            );
-
-
-            /* =================================================
-               GET DATA SOURCE VALUES
-               ================================================= */
-
-            const totalMCQuantity =
-                getDataValue(
-                    data,
-                    "Total M/C Quantity"
-                );
-
-
-            const totalFCV =
-                getDataValue(
-                    data,
-                    "Total FCV"
-                );
-
-
-            const totalContribution =
-                getDataValue(
-                    data,
-                    "Total CONTRIBUTION"
-                );
-
-
-            const totalCost =
-                getDataValue(
-                    data,
-                    "Total Cost"
-                );
-
-
-            const revenue =
-                getDataValue(
-                    data,
-                    "Revenue"
-                );
-
-
-            const teaQty =
-                getDataValue(
-                    data,
-                    "TEA QTY"
-                );
-
-
-            const exRate =
-                getDataValue(
-                    data,
-                    "EXRATE"
-                );
-
-
-            /* =================================================
-               CONSOLE CHECK
-               ================================================= */
-
-            console.log(
-                "Total M/C Quantity:",
-                totalMCQuantity
-            );
-
-            console.log(
-                "Total FCV:",
-                totalFCV
-            );
-
-            console.log(
-                "Total CONTRIBUTION:",
-                totalContribution
-            );
-
-            console.log(
-                "Total Cost:",
-                totalCost
-            );
-
-            console.log(
-                "Revenue:",
-                revenue
-            );
-
-            console.log(
-                "TEA QTY:",
-                teaQty
-            );
-
-            console.log(
-                "EXRATE:",
-                exRate
-            );
-
-
-            /* =================================================
-               UPDATE KPI CARDS
-               ================================================= */
-
-            updateKpiCard(
-                "Total M/C Quantity",
-                totalMCQuantity
-            );
-
-            updateKpiCard(
-                "Total FCV",
-                totalFCV
-            );
-
-            updateKpiCard(
-                "Total CONTRIBUTION",
-                totalContribution
-            );
-
-            updateKpiCard(
-                "Total Cost",
-                totalCost
-            );
-
-            updateKpiCard(
-                "Revenue",
-                revenue
-            );
-
-            updateKpiCard(
-                "TEA QTY",
-                teaQty
-            );
-
-            updateKpiCard(
-                "EXRATE",
-                exRate
-            );
-
-
-            console.log(
-                "Summary card values updated successfully."
-            );
-
-        } catch (error) {
-
-            console.error(
-                "Error loading summary_cards_plugin:",
-                error
-            );
-
-        }
-
-    }
-
-
-    /* =====================================================
-       GET VALUE FROM DATA SOURCE
-       ===================================================== */
-
-    function getDataValue(data, columnName) {
-
-        if (
-            data &&
-            Object.prototype.hasOwnProperty.call(
-                data,
-                columnName
-            )
-        ) {
-
-            const value = data[columnName];
-
-            if (
-                value === null ||
-                value === undefined ||
-                value === ""
-            ) {
-
-                return "0";
-
-            }
-
-            return value;
-
-        }
-
-        console.warn(
-            "Column not found in data source:",
-            columnName
+        console.log(
+            "Calling summary_cards_plugin..."
         );
 
-        return "0";
 
-    }
+        caller.GetDataFromAxList(
 
+            params,
 
-    /* =====================================================
-       UPDATE KPI CARD
-       ===================================================== */
+            function (resp) {
 
-    function updateKpiCard(titleText, value) {
+                try {
 
-        const cards =
-            dashboard.querySelectorAll(".kpi-card");
-
-
-        cards.forEach(function (card) {
-
-            const title =
-                card.querySelector(".kpi-title");
+                    console.log(
+                        "summary_cards_plugin RAW response:",
+                        resp
+                    );
 
 
-            if (!title) {
-                return;
-            }
+                    /* =========================================
+                       PARSE RESPONSE
+                       ========================================= */
+
+                    let parsed = resp;
 
 
-            const cardTitle =
-                title.textContent.trim();
-
-
-            /*
-             * Match KPI title with data source column
-             */
-
-            if (
-                cardTitle.toLowerCase() ===
-                titleText.toLowerCase()
-            ) {
-
-                /*
-                 * Try common value element names.
-                 */
-
-                let valueElement =
-                    card.querySelector(".kpi-value");
-
-
-                if (!valueElement) {
-
-                    valueElement =
-                        card.querySelector(".kpi-number");
-
-                }
-
-
-                if (!valueElement) {
-
-                    valueElement =
-                        card.querySelector(".kpi-amount");
-
-                }
-
-
-                if (!valueElement) {
-
-                    valueElement =
-                        card.querySelector(".value");
-
-                }
-
-
-                if (!valueElement) {
-
-                    /*
-                     * Find element inside the card
-                     * that is not the title.
-                     */
-
-                    const elements =
-                        card.querySelectorAll(
-                            "span, div, p"
-                        );
-
-
-                    for (
-                        let i = 0;
-                        i < elements.length;
-                        i++
+                    if (
+                        typeof parsed === "string"
                     ) {
 
-                        if (
-                            !elements[i].classList.contains(
-                                "kpi-title"
-                            )
-                        ) {
-
-                            valueElement =
-                                elements[i];
-
-                            break;
-
-                        }
+                        parsed = JSON.parse(parsed);
 
                     }
 
-                }
 
+                    /*
+                     * Sometimes Axpert returns:
+                     *
+                     * {
+                     *     d: "JSON STRING"
+                     * }
+                     */
 
-                if (valueElement) {
+                    if (
+                        parsed &&
+                        parsed.d &&
+                        typeof parsed.d === "string"
+                    ) {
 
-                    valueElement.textContent =
-                        formatValue(value);
+                        parsed = JSON.parse(
+                            parsed.d
+                        );
+
+                    }
+
 
                     console.log(
-                        "Updated:",
-                        titleText,
-                        "=",
-                        value
+                        "summary_cards_plugin PARSED:",
+                        parsed
                     );
 
-                } else {
 
-                    console.warn(
-                        "Value element not found for:",
-                        titleText
+                    /* =========================================
+                       GET DATA
+                       ========================================= */
+
+                    let listRaw = [];
+
+
+                    if (
+                        parsed &&
+                        parsed.result &&
+                        Array.isArray(
+                            parsed.result.data
+                        )
+                    ) {
+
+                        parsed.result.data.forEach(
+                            function (item) {
+
+                                if (
+                                    item &&
+                                    Array.isArray(
+                                        item.data
+                                    )
+                                ) {
+
+                                    listRaw =
+                                        listRaw.concat(
+                                            item.data
+                                        );
+
+                                }
+
+                            }
+                        );
+
+                    }
+
+
+                    console.log(
+                        "summary_cards_plugin DATA:",
+                        listRaw
+                    );
+
+
+                    /* =========================================
+                       CHECK DATA
+                       ========================================= */
+
+                    if (
+                        listRaw.length === 0
+                    ) {
+
+                        console.warn(
+                            "summary_cards_plugin returned no rows."
+                        );
+
+                        return;
+
+                    }
+
+
+                    /*
+                     * Usually this query returns
+                     * one summary row.
+                     */
+
+                    const data = listRaw[0];
+
+
+                    console.log(
+                        "SUMMARY ROW:",
+                        data
+                    );
+
+
+                    /* =========================================
+                       SHOW ALL COLUMNS
+                       ========================================= */
+
+                    console.log(
+                        "Name:",
+                        data.name
+                    );
+
+                    console.log(
+                        "Link:",
+                        data.link
+                    );
+
+                    console.log(
+                        "Total M/C Quantity:",
+                        data["Total M/C Quantity"]
+                    );
+
+                    console.log(
+                        "Total FCV:",
+                        data["Total FCV"]
+                    );
+
+                    console.log(
+                        "Total CONTRIBUTION:",
+                        data["Total CONTRIBUTION"]
+                    );
+
+                    console.log(
+                        "Total Cost:",
+                        data["Total Cost"]
+                    );
+
+                    console.log(
+                        "Revenue:",
+                        data["Revenue"]
+                    );
+
+                    console.log(
+                        "TEA QTY:",
+                        data["TEA QTY"]
+                    );
+
+                    console.log(
+                        "EXRATE:",
+                        data["EXRATE"]
+                    );
+
+
+                    /* =========================================
+                       UPDATE DASHBOARD
+                       ========================================= */
+
+                    updateDashboardCards(data);
+
+
+                } catch (e) {
+
+                    console.error(
+                        "summary_cards_plugin parse failed:",
+                        e
                     );
 
                 }
+
+            },
+
+            function (err) {
+
+                console.error(
+                    "summary_cards_plugin failed:",
+                    err
+                );
 
             }
 
-        });
+        );
 
     }
 
 
     /* =====================================================
-       FORMAT VALUE
+       UPDATE DASHBOARD CARDS
        ===================================================== */
 
-    function formatValue(value) {
+    function updateDashboardCards(data) {
+
+
+        /* =================================================
+           TOTAL M/C QUANTITY
+           ================================================= */
+
+        const mcQuantity =
+            data["Total M/C Quantity"];
+
+        setKpiValue(
+            "Total M/C Quantity",
+            mcQuantity
+        );
+
+
+        /* =================================================
+           TEA QTY
+           ================================================= */
+
+        const teaQty =
+            data["TEA QTY"];
+
+        setKpiValue(
+            "TEA QTY",
+            teaQty
+        );
+
+
+        /* =================================================
+           REVENUE / SALES USD
+           ================================================= */
+
+        const revenue =
+            data["Revenue"];
+
+        setKpiValue(
+            "Revenue",
+            revenue
+        );
+
+
+        /* =================================================
+           REVENUE LKR
+           
+           Revenue × EXRATE
+           ================================================= */
+
+        const exRate =
+            data["EXRATE"];
+
+
+        const revenueLKR =
+            toNumber(revenue) *
+            toNumber(exRate);
+
+
+        setKpiValue(
+            "RevenueLKR",
+            revenueLKR
+        );
+
+
+        /* =================================================
+           TOTAL COST
+           ================================================= */
+
+        const totalCost =
+            data["Total Cost"];
+
+        setKpiValue(
+            "Total Cost",
+            totalCost
+        );
+
+
+        /* =================================================
+           TOTAL CONTRIBUTION / PROFIT
+           ================================================= */
+
+        const contribution =
+            data["Total CONTRIBUTION"];
+
+        setKpiValue(
+            "Total CONTRIBUTION",
+            contribution
+        );
+
+
+        /* =================================================
+           OPTIONAL: TOTAL FCV
+           ================================================= */
+
+        const totalFCV =
+            data["Total FCV"];
+
+
+        console.log(
+            "Total FCV:",
+            totalFCV
+        );
+
+
+        /* =================================================
+           FINAL DEBUG
+           ================================================= */
+
+        console.log(
+            "Dashboard updated successfully."
+        );
+
+    }
+
+
+    /* =====================================================
+       SET KPI VALUE
+       ===================================================== */
+
+    function setKpiValue(
+        dataName,
+        value
+    ) {
+
+        const element =
+            dashboard.querySelector(
+                '.kpi-value[data-value="' +
+                dataName +
+                '"]'
+            );
+
+
+        if (!element) {
+
+            console.warn(
+                "KPI element not found:",
+                dataName
+            );
+
+            return;
+
+        }
+
 
         if (
             value === null ||
@@ -544,64 +478,86 @@ document.addEventListener("DOMContentLoaded", function () {
             value === ""
         ) {
 
-            return "0";
+            value = 0;
+
+        }
+
+
+        element.textContent =
+            formatNumber(value);
+
+
+        console.log(
+            "KPI updated:",
+            dataName,
+            "=",
+            value
+        );
+
+    }
+
+
+    /* =====================================================
+       CONVERT VALUE TO NUMBER
+       ===================================================== */
+
+    function toNumber(value) {
+
+        if (
+            value === null ||
+            value === undefined ||
+            value === ""
+        ) {
+
+            return 0;
 
         }
 
 
         /*
-         * Keep existing formatted strings
+         * Remove commas and other
+         * non-numeric characters.
          */
 
-        if (typeof value === "string") {
-
-            const trimmed =
-                value.trim();
-
-
-            if (trimmed === "") {
-                return "0";
-            }
+        const cleaned =
+            String(value)
+                .replace(/,/g, "")
+                .replace(/[^\d.-]/g, "");
 
 
-            /*
-             * If value is already formatted,
-             * return it as it is.
-             */
+        const number =
+            parseFloat(cleaned);
 
-            if (
-                trimmed.indexOf(",") !== -1 ||
-                trimmed.indexOf("%") !== -1
-            ) {
 
-                return trimmed;
+        if (isNaN(number)) {
 
-            }
+            return 0;
 
         }
 
 
-        /*
-         * Format numeric values
-         */
+        return number;
 
-        const numericValue =
-            Number(value);
+    }
 
 
-        if (!isNaN(numericValue)) {
+    /* =====================================================
+       FORMAT NUMBER
+       ===================================================== */
 
-            return numericValue.toLocaleString(
-                "en-US",
-                {
-                    maximumFractionDigits: 2
-                }
-            );
+    function formatNumber(value) {
 
-        }
+        const number =
+            toNumber(value);
 
 
-        return value;
+        return number.toLocaleString(
+            "en-US",
+            {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }
+        );
 
     }
 
@@ -610,7 +566,7 @@ document.addEventListener("DOMContentLoaded", function () {
        LOAD DATA
        ===================================================== */
 
-    loadSummaryCardData();
+    loadSummaryCards();
 
 
     /* =====================================================
@@ -622,3 +578,4 @@ document.addEventListener("DOMContentLoaded", function () {
     );
 
 });
+
