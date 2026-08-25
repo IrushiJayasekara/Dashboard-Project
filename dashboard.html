@@ -2,158 +2,263 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
     <title>Dashboard</title>
 
+
     <!-- Your separate CSS file -->
-    <link rel="stylesheet" href="style.css?v=14">
+    <link rel="stylesheet"
+          href="style.css?v=14">
+
 
     <!-- Axpert CSS -->
     <link type="text/css"
           rel="stylesheet"
           href="../../adamuat/HTMLPages/Css/style.css_1787634779764.css?v=1787641334705">
-          
+
 </head>
+
 
 <body>
 
+
     <div class="dashboard">
 
-        <!-- TOP KPI CARDS                  -->
+
+        <!-- =====================================================
+             TOP KPI CARDS
+             ===================================================== -->
 
         <div class="kpi-container">
 
-            <!-- Total M/C Qty -->
-            <div class="kpi-card">
+
+            <!-- =================================================
+                 TOTAL M/C QTY
+                 Data Source:
+                 Total M/C Quantity
+                 ================================================= -->
+
+            <div class="kpi-card"
+                 data-kpi="total-mc-quantity">
+
                 <div class="kpi-icon kpi-icon-green">
                     <span>▣</span>
                 </div>
 
                 <div class="kpi-content">
+
                     <div class="kpi-title">
                         Total M/C Qty
                     </div>
 
-                    <div class="kpi-value">
-                        1,311,185.5
+                    <div class="kpi-value"
+                         data-value="Total M/C Quantity">
+                        0
                     </div>
+
                 </div>
+
             </div>
 
 
-            <!-- Tea Qty -->
-            <div class="kpi-card">
+
+            <!-- =================================================
+                 TEA QTY
+                 Data Source:
+                 TEA QTY
+                 ================================================= -->
+
+            <div class="kpi-card"
+                 data-kpi="tea-qty">
+
                 <div class="kpi-icon kpi-icon-orange">
                     <span>♢</span>
                 </div>
 
                 <div class="kpi-content">
+
                     <div class="kpi-title">
                         Tea Qty (kg)
                     </div>
 
-                    <div class="kpi-value">
-                        2,546,340.00
+                    <div class="kpi-value"
+                         data-value="TEA QTY">
+                        0
                     </div>
+
                 </div>
+
             </div>
 
 
-            <!-- Sales Value USD -->
-            <div class="kpi-card">
+
+            <!-- =================================================
+                 SALES VALUE USD
+                 Data Source:
+                 Revenue
+                 ================================================= -->
+
+            <div class="kpi-card"
+                 data-kpi="sales-usd">
+
                 <div class="kpi-icon kpi-icon-green">
                     <span>$</span>
                 </div>
 
                 <div class="kpi-content">
+
                     <div class="kpi-title">
                         Sales Value(USD)
                     </div>
 
-                    <div class="kpi-value">
-                        14,848,873.00
+                    <div class="kpi-value"
+                         data-value="Revenue">
+                        0
                     </div>
+
                 </div>
+
             </div>
 
 
-            <!-- Sales Value LKR -->
-            <div class="kpi-card">
+
+            <!-- =================================================
+                 SALES VALUE LKR
+                 Data Source:
+                 Revenue × EXRATE
+                 ================================================= -->
+
+            <div class="kpi-card"
+                 data-kpi="sales-lkr">
+
                 <div class="kpi-icon kpi-icon-purple">
                     <span>▣</span>
                 </div>
 
                 <div class="kpi-content">
+
                     <div class="kpi-title">
                         Sales Value(LKR)
                     </div>
 
-                    <div class="kpi-value">
-                        660,710,760.00
+                    <div class="kpi-value"
+                         data-value="RevenueLKR">
+                        0
                     </div>
+
                 </div>
+
             </div>
 
 
-            <!-- Total Cost -->
-            <div class="kpi-card">
+
+            <!-- =================================================
+                 TOTAL COST
+                 Data Source:
+                 Total Cost
+                 ================================================= -->
+
+            <div class="kpi-card"
+                 data-kpi="total-cost">
+
                 <div class="kpi-icon kpi-icon-blue">
                     <span>▤</span>
                 </div>
 
                 <div class="kpi-content">
+
                     <div class="kpi-title-row">
+
                         <div class="kpi-title">
                             Total Cost
                         </div>
 
                         <div class="kpi-currency">
+
                             LKR
-                            <span class="dropdown-arrow">⌄</span>
+
+                            <span class="dropdown-arrow">
+                                ⌄
+                            </span>
+
                         </div>
+
                     </div>
 
-                    <div class="kpi-value">
-                        4,238,741,245.00
+
+                    <div class="kpi-value"
+                         data-value="Total Cost">
+                        0
                     </div>
+
                 </div>
+
             </div>
 
 
-            <!-- Total Profit/Loss -->
-            <div class="kpi-card">
+
+            <!-- =================================================
+                 TOTAL PROFIT / LOSS
+                 Data Source:
+                 Total CONTRIBUTION
+                 ================================================= -->
+
+            <div class="kpi-card"
+                 data-kpi="total-profit">
+
                 <div class="kpi-icon kpi-icon-orange">
                     <span>▥</span>
                 </div>
 
                 <div class="kpi-content">
+
                     <div class="kpi-title-row">
+
                         <div class="kpi-title">
                             Total Profit/Loss
                         </div>
 
                         <div class="kpi-currency">
+
                             LKR
-                            <span class="dropdown-arrow">⌄</span>
+
+                            <span class="dropdown-arrow">
+                                ⌄
+                            </span>
+
                         </div>
+
                     </div>
 
-                    <div class="kpi-value">
-                        380,123,652.00
+
+                    <div class="kpi-value"
+                         data-value="Total CONTRIBUTION">
+                        0
                     </div>
+
                 </div>
+
             </div>
 
 
-            <!-- SCAS Report -->
+
+            <!-- =================================================
+                 SCAS REPORT
+                 ================================================= -->
+
             <div class="kpi-card">
+
                 <div class="kpi-icon kpi-icon-green">
                     <span>▥</span>
                 </div>
 
                 <div class="kpi-content">
+
                     <div class="kpi-title">
                         SCAS Report
                     </div>
@@ -161,41 +266,41 @@
                     <div class="kpi-value">
                         Open
                     </div>
+
                 </div>
+
             </div>
+
 
         </div>
 
 
-        <!-- ============================= -->
-        <!-- FUTURE DASHBOARD CONTENT       -->
-        <!-- ============================= -->
+
+        <!-- =====================================================
+             FUTURE DASHBOARD CONTENT
+             ===================================================== -->
 
         <div class="dashboard-content">
 
             <!--
-                Add your other dashboard sections here.
-
-                Example:
-
-                <div class="dashboard-row">
-                    ...
-                </div>
-
-                <div class="dashboard-row">
-                    ...
-                </div>
+                Add other dashboard sections here.
             -->
 
         </div>
 
+
     </div>
 
 
-    <!-- Your separate JavaScript file -->
+
+    <!-- =========================================================
+         YOUR JAVASCRIPT
+         ========================================================= -->
+
     <script type="text/javascript"
             src="../../adamuat/HTMLPages/Js/script.js_1787634779764.js?v=1787641334706">
     </script>
+
 
 </body>
 
