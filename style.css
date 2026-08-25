@@ -1,0 +1,329 @@
+/* =========================================================
+   DASHBOARD
+   ========================================================= */
+
+.dashboard {
+    width: 100%;
+    min-height: 100vh;
+    padding: 18px 20px;
+    box-sizing: border-box;
+    background: #f5f7fa;
+    font-family: Arial, sans-serif;
+}
+
+
+/* =========================================================
+   TOP KPI CONTAINER
+   ========================================================= */
+
+.dashboard .kpi-container {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 12px;
+
+    padding: 10px;
+    box-sizing: border-box;
+
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
+
+
+/* =========================================================
+   KPI CARD
+   ========================================================= */
+
+.dashboard .kpi-card {
+    min-width: 0;
+    height: 94px;
+
+    display: flex;
+    align-items: center;
+
+    padding: 12px;
+    box-sizing: border-box;
+
+    background: #ffffff;
+    border: 1px solid #dfe3e8;
+    border-radius: 12px;
+
+    transition:
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+.dashboard .kpi-card:hover {
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   KPI ICON
+   ========================================================= */
+
+.dashboard .kpi-icon {
+    width: 42px;
+    height: 42px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-right: 12px;
+
+    border-radius: 9px;
+
+    font-size: 21px;
+    font-weight: bold;
+}
+
+
+/* Green icon */
+
+.dashboard .kpi-icon-green {
+    color: #16a34a;
+    background: #dcfce7;
+}
+
+
+/* Orange icon */
+
+.dashboard .kpi-icon-orange {
+    color: #f97316;
+    background: #ffedd5;
+}
+
+
+/* Purple icon */
+
+.dashboard .kpi-icon-purple {
+    color: #7c3aed;
+    background: #ede9fe;
+}
+
+
+/* Blue icon */
+
+.dashboard .kpi-icon-blue {
+    color: #2563eb;
+    background: #dbeafe;
+}
+
+
+/* =========================================================
+   KPI CONTENT
+   ========================================================= */
+
+.dashboard .kpi-content {
+    min-width: 0;
+    flex: 1;
+}
+
+
+/* =========================================================
+   KPI TITLE
+   ========================================================= */
+
+.dashboard .kpi-title {
+    margin-bottom: 5px;
+
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 500;
+
+    color: #111827;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+/* =========================================================
+   TITLE + CURRENCY
+   ========================================================= */
+
+.dashboard .kpi-title-row {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 5px;
+}
+
+
+.dashboard .kpi-title-row .kpi-title {
+    margin-bottom: 5px;
+}
+
+
+/* =========================================================
+   CURRENCY
+   ========================================================= */
+
+.dashboard .kpi-currency {
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    margin-top: -2px;
+
+    font-size: 9px;
+    font-weight: 400;
+
+    color: #9ca3af;
+}
+
+
+.dashboard .dropdown-arrow {
+    font-size: 14px;
+    line-height: 10px;
+    color: #6b7280;
+}
+
+
+/* =========================================================
+   KPI VALUE
+   ========================================================= */
+
+.dashboard .kpi-value {
+    font-size: 16px;
+    line-height: 20px;
+    font-weight: 500;
+
+    color: #0f172a;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+/* =========================================================
+   FUTURE DASHBOARD CONTENT
+   ========================================================= */
+
+.dashboard .dashboard-content {
+    width: 100%;
+    margin-top: 16px;
+}
+
+
+/* =========================================================
+   FUTURE DASHBOARD ROW
+   ========================================================= */
+
+.dashboard .dashboard-row {
+    width: 100%;
+
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+
+    margin-bottom: 16px;
+}
+
+
+/* =========================================================
+   RESPONSIVE - LARGE SCREENS
+   ========================================================= */
+
+@media (max-width: 1400px) {
+
+    .dashboard .kpi-container {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE - TABLET
+   ========================================================= */
+
+@media (max-width: 1000px) {
+
+    .dashboard {
+        padding: 14px;
+    }
+
+    .dashboard .kpi-container {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .dashboard .kpi-card {
+        height: 90px;
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE - SMALL TABLET
+   ========================================================= */
+
+@media (max-width: 750px) {
+
+    .dashboard .kpi-container {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .dashboard .dashboard-row {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE - MOBILE
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+    .dashboard {
+        padding: 10px;
+    }
+
+    .dashboard .kpi-container {
+        grid-template-columns: 1fr;
+        gap: 10px;
+
+        padding: 8px;
+    }
+
+    .dashboard .kpi-card {
+        height: 82px;
+        padding: 10px;
+    }
+
+    .dashboard .kpi-icon {
+        width: 38px;
+        height: 38px;
+
+        margin-right: 10px;
+
+        font-size: 18px;
+    }
+
+    .dashboard .kpi-title {
+        font-size: 11px;
+    }
+
+    .dashboard .kpi-value {
+        font-size: 15px;
+    }
+
+}
