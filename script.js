@@ -1,79 +1,138 @@
 document.addEventListener("DOMContentLoaded", function () {
 
+
     /* =====================================================
        DASHBOARD INITIALIZATION
        ===================================================== */
 
-    const dashboard = document.querySelector(".dashboard");
+    const dashboard =
+        document.querySelector(".dashboard");
+
 
     if (!dashboard) {
-        console.warn("Dashboard container not found.");
+
+        console.warn(
+            "Dashboard container not found."
+        );
+
         return;
-    }
-
-
-    /* =====================================================
-       KPI CARD HOVER
-       ===================================================== */
-
-    const kpiCards = dashboard.querySelectorAll(".kpi-card");
-
-    kpiCards.forEach(function (card) {
-
-        card.addEventListener("mouseenter", function () {
-            card.classList.add("active");
-        });
-
-        card.addEventListener("mouseleave", function () {
-            card.classList.remove("active");
-        });
-
-    });
-
-
-    /* =====================================================
-       SCAS REPORT
-       ===================================================== */
-
-    const scasCard = Array.from(kpiCards).find(function (card) {
-
-        const title = card.querySelector(".kpi-title");
-
-        return title &&
-               title.textContent.trim() === "SCAS Report";
-
-    });
-
-
-    if (scasCard) {
-
-        scasCard.addEventListener("click", function () {
-
-            console.log("SCAS Report clicked");
-
-        });
 
     }
 
 
     /* =====================================================
-       CURRENCY DROPDOWNS
+       VARIABLES
        ===================================================== */
 
-    const currencyElements =
-        dashboard.querySelectorAll(".kpi-currency");
+    let dashboardData = null;
 
-    currencyElements.forEach(function (currency) {
+    let reportLink = "";
 
-        currency.addEventListener("click", function (event) {
 
-            event.stopPropagation();
+    /* =====================================================
+       GET KPI ELEMENT
+       ===================================================== */
 
-            console.log("Currency selector clicked");
+    function getKpiElement(dataName) {
 
-        });
+        return dashboard.querySelector(
+            '.kpi-value[data-value="' +
+            dataName +
+            '"]'
+        );
 
-    });
+    }
+
+
+    /* =====================================================
+       SET KPI VALUE
+       ===================================================== */
+
+    function setKpiValue(
+        dataName,
+        value
+    ) {
+
+        const element =
+            getKpiElement(dataName);
+
+
+        if (!element) {
+
+            console.warn(
+                "KPI element not found:",
+                dataName
+            );
+
+            return;
+
+        }
+
+
+        element.textContent =
+            formatNumber(value);
+
+    }
+
+
+    /* =====================================================
+       CONVERT VALUE TO NUMBER
+       ===================================================== */
+
+    function toNumber(value) {
+
+        if (
+            value === null ||
+            value === undefined ||
+            value === ""
+        ) {
+
+            return 0;
+
+        }
+
+
+        const cleaned =
+            String(value)
+                .replace(/,/g, "")
+                .replace(/[^\d.-]/g, "");
+
+
+        const number =
+            parseFloat(cleaned);
+
+
+        if (isNaN(number)) {
+
+            return 0;
+
+        }
+
+
+        return number;
+
+    }
+
+
+    /* =====================================================
+       FORMAT NUMBER
+       ===================================================== */
+
+    function formatNumber(value) {
+
+        const number =
+            toNumber(value);
+
+
+        return number.toLocaleString(
+            "en-US",
+            {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }
+        );
+
+    }
 
 
     /* =====================================================
@@ -84,24 +143,32 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const params = {
 
-            adsNames: ["summary_cards_plugin"],
+            adsNames: [
+                "summary_cards_plugin"
+            ],
 
             refreshCache: false,
 
             sqlParams: {},
 
             props: {
+
                 ADS: true,
+
                 pageno: 1,
+
                 pagesize: 500
+
             }
 
         };
 
 
         const caller =
-            (typeof parent !== "undefined" &&
-             parent.GetDataFromAxList)
+            (
+                typeof parent !== "undefined" &&
+                parent.GetDataFromAxList
+            )
                 ? parent
                 : window;
 
@@ -111,9 +178,28 @@ document.addEventListener("DOMContentLoaded", function () {
         );
 
 
+        if (
+            typeof caller.GetDataFromAxList !==
+            "function"
+        ) {
+
+            console.error(
+                "GetDataFromAxList is not available."
+            );
+
+            return;
+
+        }
+
+
         caller.GetDataFromAxList(
 
             params,
+
+
+            /* =================================================
+               SUCCESS
+               ================================================= */
 
             function (resp) {
 
@@ -133,10 +219,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
                     if (
-                        typeof parsed === "string"
+                        typeof parsed ===
+                        "string"
                     ) {
 
-                        parsed = JSON.parse(parsed);
+                        parsed =
+                            JSON.parse(parsed);
 
                     }
 
@@ -152,12 +240,14 @@ document.addEventListener("DOMContentLoaded", function () {
                     if (
                         parsed &&
                         parsed.d &&
-                        typeof parsed.d === "string"
+                        typeof parsed.d ===
+                        "string"
                     ) {
 
-                        parsed = JSON.parse(
-                            parsed.d
-                        );
+                        parsed =
+                            JSON.parse(
+                                parsed.d
+                            );
 
                     }
 
@@ -229,67 +319,90 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
 
 
-                    /*
-                     * Usually this query returns
-                     * one summary row.
-                     */
+                    /* =========================================
+                       GET FIRST SUMMARY ROW
+                       ========================================= */
 
-                    const data = listRaw[0];
+                    dashboardData =
+                        listRaw[0];
 
 
                     console.log(
                         "SUMMARY ROW:",
-                        data
+                        dashboardData
                     );
 
 
                     /* =========================================
-                       SHOW ALL COLUMNS
+                       GET SCAS REPORT LINK
+                       ========================================= */
+
+                    reportLink =
+                        dashboardData.link ||
+                        "";
+
+
+                    /* =========================================
+                       DEBUG DATA
                        ========================================= */
 
                     console.log(
                         "Name:",
-                        data.name
+                        dashboardData.name
                     );
 
                     console.log(
                         "Link:",
-                        data.link
+                        dashboardData.link
                     );
 
                     console.log(
                         "Total M/C Quantity:",
-                        data["Total M/C Quantity"]
+                        dashboardData[
+                            "Total M/C Quantity"
+                        ]
                     );
 
                     console.log(
                         "Total FCV:",
-                        data["Total FCV"]
+                        dashboardData[
+                            "Total FCV"
+                        ]
                     );
 
                     console.log(
                         "Total CONTRIBUTION:",
-                        data["Total CONTRIBUTION"]
+                        dashboardData[
+                            "Total CONTRIBUTION"
+                        ]
                     );
 
                     console.log(
                         "Total Cost:",
-                        data["Total Cost"]
+                        dashboardData[
+                            "Total Cost"
+                        ]
                     );
 
                     console.log(
                         "Revenue:",
-                        data["Revenue"]
+                        dashboardData[
+                            "Revenue"
+                        ]
                     );
 
                     console.log(
                         "TEA QTY:",
-                        data["TEA QTY"]
+                        dashboardData[
+                            "TEA QTY"
+                        ]
                     );
 
                     console.log(
                         "EXRATE:",
-                        data["EXRATE"]
+                        dashboardData[
+                            "EXRATE"
+                        ]
                     );
 
 
@@ -297,7 +410,9 @@ document.addEventListener("DOMContentLoaded", function () {
                        UPDATE DASHBOARD
                        ========================================= */
 
-                    updateDashboardCards(data);
+                    updateDashboardCards(
+                        dashboardData
+                    );
 
 
                 } catch (e) {
@@ -310,6 +425,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
 
             },
+
+
+            /* =================================================
+               ERROR
+               ================================================= */
 
             function (err) {
 
@@ -337,7 +457,10 @@ document.addEventListener("DOMContentLoaded", function () {
            ================================================= */
 
         const mcQuantity =
-            data["Total M/C Quantity"];
+            data[
+                "Total M/C Quantity"
+            ];
+
 
         setKpiValue(
             "Total M/C Quantity",
@@ -350,7 +473,10 @@ document.addEventListener("DOMContentLoaded", function () {
            ================================================= */
 
         const teaQty =
-            data["TEA QTY"];
+            data[
+                "TEA QTY"
+            ];
+
 
         setKpiValue(
             "TEA QTY",
@@ -359,37 +485,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         /* =================================================
-           REVENUE / SALES USD
-           ================================================= */
-
-        const revenue =
-            data["Revenue"];
-
-        setKpiValue(
-            "Revenue",
-            revenue
-        );
-
-
-        /* =================================================
-           REVENUE LKR
+           SALES VALUE
            
-           Revenue × EXRATE
+           Original logic:
+           
+           LKR = Revenue
+           USD = Total FCV
+           
            ================================================= */
 
-        const exRate =
-            data["EXRATE"];
-
-
-        const revenueLKR =
-            toNumber(revenue) *
-            toNumber(exRate);
-
-
-        setKpiValue(
-            "RevenueLKR",
-            revenueLKR
-        );
+        updateCurrency("LKR");
 
 
         /* =================================================
@@ -397,7 +502,10 @@ document.addEventListener("DOMContentLoaded", function () {
            ================================================= */
 
         const totalCost =
-            data["Total Cost"];
+            data[
+                "Total Cost"
+            ];
+
 
         setKpiValue(
             "Total Cost",
@@ -406,11 +514,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         /* =================================================
-           TOTAL CONTRIBUTION / PROFIT
+           TOTAL PROFIT / LOSS
            ================================================= */
 
         const contribution =
-            data["Total CONTRIBUTION"];
+            data[
+                "Total CONTRIBUTION"
+            ];
+
 
         setKpiValue(
             "Total CONTRIBUTION",
@@ -419,11 +530,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         /* =================================================
-           OPTIONAL: TOTAL FCV
+           TOTAL FCV
            ================================================= */
 
         const totalFCV =
-            data["Total FCV"];
+            data[
+                "Total FCV"
+            ];
 
 
         console.log(
@@ -431,10 +544,6 @@ document.addEventListener("DOMContentLoaded", function () {
             totalFCV
         );
 
-
-        /* =================================================
-           FINAL DEBUG
-           ================================================= */
 
         console.log(
             "Dashboard updated successfully."
@@ -444,122 +553,382 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /* =====================================================
-       SET KPI VALUE
+       UPDATE CURRENCY
        ===================================================== */
 
-    function setKpiValue(
-        dataName,
-        value
-    ) {
+    function updateCurrency(currency) {
 
-        const element =
-            dashboard.querySelector(
-                '.kpi-value[data-value="' +
-                dataName +
-                '"]'
-            );
-
-
-        if (!element) {
-
-            console.warn(
-                "KPI element not found:",
-                dataName
-            );
+        if (!dashboardData) {
 
             return;
 
         }
 
 
-        if (
-            value === null ||
-            value === undefined ||
-            value === ""
-        ) {
+        const salesValue =
+            getKpiElement(
+                "Sales Value"
+            );
 
-            value = 0;
+
+        const totalCost =
+            getKpiElement(
+                "Total Cost"
+            );
+
+
+        const contribution =
+            getKpiElement(
+                "Total CONTRIBUTION"
+            );
+
+
+        const lkrButton =
+            dashboard.querySelector(
+                '[data-currency="LKR"]'
+            );
+
+
+        const usdButton =
+            dashboard.querySelector(
+                '[data-currency="USD"]'
+            );
+
+
+        /* =================================================
+           VALUES
+           ================================================= */
+
+        const revenue =
+            toNumber(
+                dashboardData[
+                    "Revenue"
+                ]
+            );
+
+
+        const totalFCV =
+            toNumber(
+                dashboardData[
+                    "Total FCV"
+                ]
+            );
+
+
+        const totalCostLKR =
+            toNumber(
+                dashboardData[
+                    "Total Cost"
+                ]
+            );
+
+
+        const contributionLKR =
+            toNumber(
+                dashboardData[
+                    "Total CONTRIBUTION"
+                ]
+            );
+
+
+        const exchangeRate =
+            toNumber(
+                dashboardData[
+                    "EXRATE"
+                ]
+            ) || 1;
+
+
+        const totalCostUSD =
+            totalCostLKR /
+            exchangeRate;
+
+
+        const contributionUSD =
+            contributionLKR /
+            exchangeRate;
+
+
+        /* =================================================
+           USD
+           ================================================= */
+
+        if (currency === "USD") {
+
+
+            /*
+             * Sales Value
+             *
+             * Same logic as your original code:
+             * Total FCV
+             */
+
+            if (salesValue) {
+
+                salesValue.textContent =
+                    formatNumber(
+                        totalFCV
+                    );
+
+            }
+
+
+            /*
+             * Total Cost
+             */
+
+            if (totalCost) {
+
+                totalCost.textContent =
+                    formatNumber(
+                        totalCostUSD
+                    );
+
+            }
+
+
+            /*
+             * Profit / Loss
+             */
+
+            if (contribution) {
+
+                contribution.textContent =
+                    formatNumber(
+                        contributionUSD
+                    );
+
+            }
+
+
+            /* Active button */
+
+            if (usdButton) {
+
+                usdButton.classList.add(
+                    "active"
+                );
+
+            }
+
+
+            if (lkrButton) {
+
+                lkrButton.classList.remove(
+                    "active"
+                );
+
+            }
 
         }
 
 
-        element.textContent =
-            formatNumber(value);
+        /* =================================================
+           LKR
+           ================================================= */
+
+        else {
 
 
-        console.log(
-            "KPI updated:",
-            dataName,
-            "=",
-            value
+            /*
+             * Sales Value
+             */
+
+            if (salesValue) {
+
+                salesValue.textContent =
+                    formatNumber(
+                        revenue
+                    );
+
+            }
+
+
+            /*
+             * Total Cost
+             */
+
+            if (totalCost) {
+
+                totalCost.textContent =
+                    formatNumber(
+                        totalCostLKR
+                    );
+
+            }
+
+
+            /*
+             * Profit / Loss
+             */
+
+            if (contribution) {
+
+                contribution.textContent =
+                    formatNumber(
+                        contributionLKR
+                    );
+
+            }
+
+
+            /* Active button */
+
+            if (lkrButton) {
+
+                lkrButton.classList.add(
+                    "active"
+                );
+
+            }
+
+
+            if (usdButton) {
+
+                usdButton.classList.remove(
+                    "active"
+                );
+
+            }
+
+        }
+
+    }
+
+
+    /* =====================================================
+       CURRENCY BUTTONS
+       ===================================================== */
+
+    const currencyButtons =
+        dashboard.querySelectorAll(
+            ".currency-option"
         );
 
-    }
+
+    currencyButtons.forEach(
+        function (button) {
+
+            button.addEventListener(
+                "click",
+                function () {
+
+                    const currency =
+                        button.dataset.currency;
+
+
+                    updateCurrency(
+                        currency
+                    );
+
+                }
+            );
+
+        }
+    );
 
 
     /* =====================================================
-       CONVERT VALUE TO NUMBER
+       SCAS REPORT
        ===================================================== */
 
-    function toNumber(value) {
-
-        if (
-            value === null ||
-            value === undefined ||
-            value === ""
-        ) {
-
-            return 0;
-
-        }
+    const scasCard =
+        dashboard.querySelector(
+            '[data-kpi="scas-report"]'
+        );
 
 
-        /*
-         * Remove commas and other
-         * non-numeric characters.
-         */
+    if (scasCard) {
 
-        const cleaned =
-            String(value)
-                .replace(/,/g, "")
-                .replace(/[^\d.-]/g, "");
+        scasCard.addEventListener(
+            "click",
+            function () {
 
+                if (!reportLink) {
 
-        const number =
-            parseFloat(cleaned);
+                    console.warn(
+                        "SCAS Report link not available."
+                    );
 
+                    return;
 
-        if (isNaN(number)) {
-
-            return 0;
-
-        }
+                }
 
 
-        return number;
-
-    }
-
-
-    /* =====================================================
-       FORMAT NUMBER
-       ===================================================== */
-
-    function formatNumber(value) {
-
-        const number =
-            toNumber(value);
+                console.log(
+                    "Opening SCAS Report:",
+                    reportLink
+                );
 
 
-        return number.toLocaleString(
-            "en-US",
-            {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
+                /*
+                 * Uses the same Axpert
+                 * navigation method as your
+                 * original code.
+                 */
+
+                if (
+                    typeof navigateToUrl ===
+                    "function"
+                ) {
+
+                    navigateToUrl(
+                        reportLink
+                    );
+
+                } else {
+
+                    window.open(
+                        reportLink,
+                        "_blank"
+                    );
+
+                }
+
             }
         );
 
     }
+
+
+    /* =====================================================
+       KPI CARD HOVER
+       ===================================================== */
+
+    const kpiCards =
+        dashboard.querySelectorAll(
+            ".kpi-card"
+        );
+
+
+    kpiCards.forEach(
+        function (card) {
+
+            card.addEventListener(
+                "mouseenter",
+                function () {
+
+                    card.classList.add(
+                        "active"
+                    );
+
+                }
+            );
+
+
+            card.addEventListener(
+                "mouseleave",
+                function () {
+
+                    card.classList.remove(
+                        "active"
+                    );
+
+                }
+            );
+
+        }
+    );
 
 
     /* =====================================================
@@ -578,4 +947,3 @@ document.addEventListener("DOMContentLoaded", function () {
     );
 
 });
-

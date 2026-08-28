@@ -3,12 +3,19 @@
    ========================================================= */
 
 .dashboard {
+
     width: 100%;
+
     min-height: 100vh;
+
     padding: 18px 20px;
+
     box-sizing: border-box;
+
     background: #f5f7fa;
+
     font-family: Arial, sans-serif;
+
 }
 
 
@@ -17,49 +24,229 @@
    ========================================================= */
 
 .dashboard .kpi-container {
+
     width: 100%;
-    display: grid;
-    grid-template-columns: repeat(7, minmax(0, 1fr));
-    gap: 12px;
+
+    display: flex;
+
+    align-items: stretch;
+
+    gap: 10px;
 
     padding: 10px;
+
     box-sizing: border-box;
 
     background: #ffffff;
+
     border: 1px solid #e5e7eb;
+
     border-radius: 16px;
 
     box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+
 }
 
 
 /* =========================================================
-   KPI CARD
+   NORMAL KPI CARD
    ========================================================= */
 
 .dashboard .kpi-card {
+
+    flex: 1;
+
     min-width: 0;
-    height: 94px;
+
+    height: 84px;
 
     display: flex;
+
     align-items: center;
 
-    padding: 12px;
+    padding: 10px;
+
     box-sizing: border-box;
 
     background: #ffffff;
-    border: 1px solid #dfe3e8;
-    border-radius: 12px;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 10px;
 
     transition:
         box-shadow 0.2s ease,
         transform 0.2s ease;
+
 }
 
 
+/* =========================================================
+   KPI CARD HOVER
+   ========================================================= */
+
 .dashboard .kpi-card:hover {
+
     box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+
     transform: translateY(-1px);
+
+}
+
+
+/* =========================================================
+   VALUE SUMMARY
+   ========================================================= */
+
+.dashboard .value-summary {
+
+    flex: 3;
+
+    min-width: 0;
+
+    background: #ffffff;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 10px;
+
+    padding: 8px;
+
+    box-sizing: border-box;
+
+}
+
+
+/* =========================================================
+   VALUE SUMMARY HEADER
+   ========================================================= */
+
+.dashboard .value-summary-header {
+
+    height: 20px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 0 4px 5px 4px;
+
+    box-sizing: border-box;
+
+}
+
+
+/* =========================================================
+   VALUE SUMMARY TITLE
+   ========================================================= */
+
+.dashboard .value-summary-title {
+
+    font-size: 10px;
+
+    font-weight: 600;
+
+    color: #111827;
+
+}
+
+
+/* =========================================================
+   CURRENCY SWITCH
+   ========================================================= */
+
+.dashboard .currency-switch {
+
+    display: flex;
+
+    align-items: center;
+
+    border: 1px solid #e5e7eb;
+
+    background: #f9fafb;
+
+    border-radius: 14px;
+
+    height: 22px;
+
+    overflow: hidden;
+
+}
+
+
+/* =========================================================
+   CURRENCY OPTION
+   ========================================================= */
+
+.dashboard .currency-option {
+
+    border: none;
+
+    background: transparent;
+
+    color: #6b7280;
+
+    font-size: 9px;
+
+    font-weight: 500;
+
+    height: 22px;
+
+    min-width: 34px;
+
+    padding: 0 8px;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+
+}
+
+
+/* =========================================================
+   ACTIVE CURRENCY
+   ========================================================= */
+
+.dashboard .currency-option.active {
+
+    background: #4f46e5;
+
+    color: #ffffff;
+
+    border-radius: 12px;
+
+}
+
+
+/* =========================================================
+   VALUE CARDS
+   ========================================================= */
+
+.dashboard .value-cards {
+
+    display: flex;
+
+    gap: 8px;
+
+    width: 100%;
+
+}
+
+
+/* =========================================================
+   VALUE CARDS - KPI
+   ========================================================= */
+
+.dashboard .value-cards .kpi-card {
+
+    flex: 1;
+
+    height: 64px;
+
+    padding: 8px;
+
 }
 
 
@@ -68,53 +255,81 @@
    ========================================================= */
 
 .dashboard .kpi-icon {
-    width: 42px;
-    height: 42px;
+
+    width: 38px;
+
+    height: 38px;
+
+    min-width: 38px;
+
+    border-radius: 8px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    margin-right: 10px;
 
     flex-shrink: 0;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    font-size: 20px;
 
-    margin-right: 12px;
+    font-weight: 600;
 
-    border-radius: 9px;
-
-    font-size: 21px;
-    font-weight: bold;
 }
 
 
-/* Green icon */
+/* =========================================================
+   GREEN ICON
+   ========================================================= */
 
 .dashboard .kpi-icon-green {
-    color: #16a34a;
+
     background: #dcfce7;
+
+    color: #16a34a;
+
 }
 
 
-/* Orange icon */
+/* =========================================================
+   ORANGE ICON
+   ========================================================= */
 
 .dashboard .kpi-icon-orange {
+
+    background: #fff4e6;
+
     color: #f97316;
-    background: #ffedd5;
+
 }
 
 
-/* Purple icon */
-
-.dashboard .kpi-icon-purple {
-    color: #7c3aed;
-    background: #ede9fe;
-}
-
-
-/* Blue icon */
+/* =========================================================
+   BLUE ICON
+   ========================================================= */
 
 .dashboard .kpi-icon-blue {
-    color: #2563eb;
+
     background: #dbeafe;
+
+    color: #2563eb;
+
+}
+
+
+/* =========================================================
+   PURPLE ICON
+   ========================================================= */
+
+.dashboard .kpi-icon-purple {
+
+    background: #ede9fe;
+
+    color: #7c3aed;
+
 }
 
 
@@ -123,8 +338,15 @@
    ========================================================= */
 
 .dashboard .kpi-content {
+
+    display: flex;
+
+    flex-direction: column;
+
     min-width: 0;
+
     flex: 1;
+
 }
 
 
@@ -133,64 +355,27 @@
    ========================================================= */
 
 .dashboard .kpi-title {
-    margin-bottom: 5px;
 
-    font-size: 12px;
+    display: flex;
+
+    align-items: center;
+
+    font-size: 11px;
+
     line-height: 16px;
+
     font-weight: 500;
+
+    margin-bottom: 3px;
 
     color: #111827;
 
     white-space: nowrap;
+
     overflow: hidden;
+
     text-overflow: ellipsis;
-}
 
-
-/* =========================================================
-   TITLE + CURRENCY
-   ========================================================= */
-
-.dashboard .kpi-title-row {
-    width: 100%;
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    gap: 5px;
-}
-
-
-.dashboard .kpi-title-row .kpi-title {
-    margin-bottom: 5px;
-}
-
-
-/* =========================================================
-   CURRENCY
-   ========================================================= */
-
-.dashboard .kpi-currency {
-    flex-shrink: 0;
-
-    display: flex;
-    align-items: center;
-    gap: 5px;
-
-    margin-top: -2px;
-
-    font-size: 9px;
-    font-weight: 400;
-
-    color: #9ca3af;
-}
-
-
-.dashboard .dropdown-arrow {
-    font-size: 14px;
-    line-height: 10px;
-    color: #6b7280;
 }
 
 
@@ -199,15 +384,21 @@
    ========================================================= */
 
 .dashboard .kpi-value {
+
     font-size: 16px;
+
     line-height: 20px;
+
     font-weight: 500;
 
     color: #0f172a;
 
     white-space: nowrap;
+
     overflow: hidden;
+
     text-overflow: ellipsis;
+
 }
 
 
@@ -216,8 +407,11 @@
    ========================================================= */
 
 .dashboard .dashboard-content {
+
     width: 100%;
+
     margin-top: 16px;
+
 }
 
 
@@ -226,106 +420,211 @@
    ========================================================= */
 
 .dashboard .dashboard-row {
+
     width: 100%;
 
     display: grid;
+
     grid-template-columns: repeat(2, minmax(0, 1fr));
+
     gap: 16px;
 
     margin-bottom: 16px;
+
 }
 
 
 /* =========================================================
-   RESPONSIVE - LARGE SCREENS
+   RESPONSIVE - 1400px
    ========================================================= */
 
 @media (max-width: 1400px) {
 
     .dashboard .kpi-container {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
+
+        flex-wrap: wrap;
+
+    }
+
+    .dashboard .kpi-container > .kpi-card {
+
+        flex: 1 1 calc(25% - 10px);
+
+    }
+
+    .dashboard .value-summary {
+
+        flex: 1 1 100%;
+
+        order: 3;
+
     }
 
 }
 
 
 /* =========================================================
-   RESPONSIVE - TABLET
+   RESPONSIVE - 1000px
    ========================================================= */
 
 @media (max-width: 1000px) {
 
     .dashboard {
+
         padding: 14px;
+
     }
 
     .dashboard .kpi-container {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+
+        gap: 6px;
+
+    }
+
+    .dashboard .kpi-container > .kpi-card {
+
+        flex: 1 1 calc(33.333% - 6px);
+
     }
 
     .dashboard .kpi-card {
-        height: 90px;
+
+        padding: 8px;
+
+    }
+
+    .dashboard .kpi-icon {
+
+        width: 34px;
+
+        height: 34px;
+
+        min-width: 34px;
+
+        margin-right: 7px;
+
+        font-size: 18px;
+
+    }
+
+    .dashboard .kpi-value {
+
+        font-size: 14px;
+
     }
 
 }
 
 
 /* =========================================================
-   RESPONSIVE - SMALL TABLET
+   RESPONSIVE - 750px
    ========================================================= */
 
 @media (max-width: 750px) {
 
     .dashboard .kpi-container {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+
+        flex-wrap: wrap;
+
+    }
+
+    .dashboard .kpi-container > .kpi-card {
+
+        flex: 1 1 calc(50% - 6px);
+
+    }
+
+    .dashboard .value-summary {
+
+        flex: 1 1 100%;
+
     }
 
     .dashboard .dashboard-row {
+
         grid-template-columns: 1fr;
+
     }
 
 }
 
 
 /* =========================================================
-   RESPONSIVE - MOBILE
+   RESPONSIVE - 480px
    ========================================================= */
 
 @media (max-width: 480px) {
 
     .dashboard {
+
         padding: 10px;
+
     }
 
     .dashboard .kpi-container {
-        grid-template-columns: 1fr;
+
+        flex-direction: column;
+
         gap: 10px;
 
         padding: 8px;
+
     }
 
-    .dashboard .kpi-card {
+    .dashboard .kpi-container > .kpi-card {
+
+        width: 100%;
+
+        flex: none;
+
         height: 82px;
-        padding: 10px;
+
+    }
+
+    .dashboard .value-summary {
+
+        width: 100%;
+
+        flex: none;
+
+    }
+
+    .dashboard .value-cards {
+
+        flex-direction: column;
+
+    }
+
+    .dashboard .value-cards .kpi-card {
+
+        height: 64px;
+
     }
 
     .dashboard .kpi-icon {
+
         width: 38px;
+
         height: 38px;
+
+        min-width: 38px;
 
         margin-right: 10px;
 
         font-size: 18px;
+
     }
 
     .dashboard .kpi-title {
+
         font-size: 11px;
+
     }
 
     .dashboard .kpi-value {
+
         font-size: 15px;
+
     }
 
 }
-
-
