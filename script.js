@@ -19,6 +19,401 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
+    setTimeout(function(){
+ 
+    const cardWrapper = document.querySelector(
+
+        '.dasboard-cards[data-card="{{cardname}}"]'
+
+    );
+ 
+    if(!cardWrapper) return;
+ 
+ 
+    const fromDate = cardWrapper.querySelector(".from-date");
+
+    const toDate = cardWrapper.querySelector(".to-date");
+
+    const rangeText = cardWrapper.querySelector(".selected-range-value-text");
+ 
+ 
+    /*  DEFAULT DATES */
+ 
+    const today = new Date();
+ 
+    const previousMonth = new Date(
+
+        today.getFullYear(),
+
+        today.getMonth(),
+
+        today.getDate() - 30
+
+    );
+ 
+ 
+    function formatDateForInput(date){
+ 
+        const year = date.getFullYear();
+ 
+        const month = String(
+
+            date.getMonth() + 1
+
+        ).padStart(2,"0");
+ 
+        const day = String(
+
+            date.getDate()
+
+        ).padStart(2,"0");
+ 
+        return year + "-" + month + "-" + day;
+ 
+    }
+ 
+ 
+    /* Default: last 30 days */
+ 
+    fromDate.value = formatDateForInput(previousMonth);
+
+    toDate.value = formatDateForInput(today);
+ 
+ 
+    /* FORMAT DISPLAY DATE */
+ 
+    function formatDisplayDate(value){
+ 
+        if(!value) return "";
+ 
+        const parts = value.split("-");
+ 
+        const date = new Date(
+
+            Number(parts[0]),
+
+            Number(parts[1]) - 1,
+
+            Number(parts[2])
+
+        );
+ 
+        return date.toLocaleDateString(
+
+            "en-US",
+
+            {
+
+                month:"short",
+
+                day:"numeric",
+
+                year:"numeric"
+
+            }
+
+        );
+ 
+    }
+ 
+ 
+    /*  UPDATE RANGE TEXT*/
+ 
+    function updateRangeText(){
+ 
+        if(!fromDate.value || !toDate.value){
+ 
+            rangeText.textContent = "Select dates";
+ 
+            return;
+
+        }
+ 
+ 
+        const from = formatDisplayDate(
+
+            fromDate.value
+
+        );
+ 
+        const to = formatDisplayDate(
+
+            toDate.value
+
+        );
+ 
+ 
+        rangeText.textContent =
+
+            from + " – " + to;
+ 
+    }
+ 
+ 
+    /* FROM DATE CHANGE */
+ 
+    fromDate.addEventListener(
+
+        "change",
+
+        function(){
+ 
+            /* To date cannot be before From date */
+ 
+            toDate.min = fromDate.value;
+ 
+ 
+            if(
+
+                toDate.value &&
+
+                toDate.value < fromDate.value
+
+            ){
+ 
+                toDate.value = fromDate.value;
+ 
+            }
+ 
+ 
+            updateRangeText();
+ 
+        }
+
+    );
+ 
+ 
+    /*  TO DATE CHANGE */
+ 
+    toDate.addEventListener(
+
+        "change",
+
+        function(){
+ 
+            if(
+
+                fromDate.value &&
+
+                toDate.value < fromDate.value
+
+            ){
+ 
+                alert(
+
+                    "To Date cannot be earlier than From Date."
+
+                );
+ 
+                toDate.value = fromDate.value;
+ 
+            }
+ 
+ 
+            updateRangeText();
+ 
+        }
+
+    );
+ 
+ 
+    /*  INITIAL MIN DATE */
+ 
+    toDate.min = fromDate.value;
+ 
+ 
+    /*INITIAL DISPLAY */
+ 
+    updateRangeText();
+ 
+ 
+    /*  APPLY FUNCTION */
+ 
+    window.applyDateRange = function(){
+ 
+        if(!fromDate.value || !toDate.value){
+ 
+            alert(
+
+                "Please select both From Date and To Date."
+
+            );
+ 
+            return;
+ 
+        }
+ 
+ 
+        if(toDate.value < fromDate.value){
+ 
+            alert(
+
+                "To Date cannot be earlier than From Date."
+
+            );
+ 
+            return;
+ 
+        }
+ 
+ 
+        const selectedFromDate =
+
+            fromDate.value;
+ 
+        const selectedToDate =
+
+            toDate.value;
+ 
+ 
+        /*
+
+         * These values can later be used
+
+         * as dashboard parameters.
+
+         */
+ 
+        window.dashboardFromDate =
+
+            selectedFromDate;
+ 
+        window.dashboardToDate =
+
+            selectedToDate;
+ 
+ 
+        updateRangeText();
+ 
+ 
+        console.log(
+
+            "From Date:",
+
+            selectedFromDate
+
+        );
+ 
+        console.log(
+
+            "To Date:",
+
+            selectedToDate
+
+        );
+ 
+ 
+        /*
+
+         * Custom event
+
+         * Useful later when connecting
+
+         * this date range to charts/cards.
+
+         */
+ 
+        document.dispatchEvent(
+
+            new CustomEvent(
+
+                "dashboardDateRangeChanged",
+
+                {
+
+                    detail:{
+
+                        fromDate:selectedFromDate,
+
+                        toDate:selectedToDate
+
+                    }
+
+                }
+
+            )
+
+        );
+ 
+ 
+        /* Small visual feedback */
+ 
+        const button =
+
+            cardWrapper.querySelector(
+
+                ".date-apply-btn"
+
+            );
+ 
+        const originalText =
+
+            button.textContent;
+ 
+        button.textContent =
+
+            "Applied ✓";
+ 
+ 
+        setTimeout(function(){
+ 
+            button.textContent =
+
+                originalText;
+ 
+        },1500);
+ 
+    };
+ 
+ 
+    //   CLEAR FUNCTION
+ 
+    window.clearDateRange = function(){
+ 
+        fromDate.value = "";
+
+        toDate.value = "";
+ 
+        toDate.removeAttribute("min");
+ 
+        rangeText.textContent =
+
+            "Select dates";
+ 
+ 
+        window.dashboardFromDate = null;
+
+        window.dashboardToDate = null;
+ 
+ 
+        document.dispatchEvent(
+
+            new CustomEvent(
+
+                "dashboardDateRangeChanged",
+
+                {
+
+                    detail:{
+
+                        fromDate:null,
+
+                        toDate:null
+
+                    }
+
+                }
+
+            )
+
+        );
+ 
+    };
+ 
+ 
+},10);
+ 
+
 
     /* =====================================================
        VARIABLES
@@ -947,3 +1342,4 @@ document.addEventListener("DOMContentLoaded", function () {
     );
 
 });
+
