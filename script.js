@@ -181,6 +181,274 @@ document.addEventListener("DOMContentLoaded", function () {
         /* Update displayed range */
         updateRangeText();
 
+   /* New COde for clickable changes */
+/* =========================================================
+   COST COMPOSITION LEGEND CLICK TOGGLE
+   ---------------------------------------------------------
+   ADDITIVE MODIFICATION ONLY
+   Does not change:
+   - Axpert data loading
+   - Date range
+   - Chart data
+   - Existing chart rendering
+   - Existing connected parameters
+   ========================================================= */
+
+(function enableCostCompositionLegendToggle() {
+
+    const legend =
+        document.getElementById(
+            "costCompositionLegend"
+        );
+
+    if (!legend) {
+        return;
+    }
+
+
+    /* =====================================================
+       CLICK EVENT
+       Event delegation is used because the legend is
+       recreated dynamically every time the chart loads.
+       ===================================================== */
+
+    legend.addEventListener(
+        "click",
+        function (event) {
+
+            const row =
+                event.target.closest(
+                    ".cost-legend-row"
+                );
+
+
+            if (!row) {
+                return;
+            }
+
+
+            /* =================================================
+               GET CHART
+               ================================================= */
+
+            const chartContainer =
+                document.getElementById(
+                    "costCompositionChart"
+                );
+
+
+            if (
+                !chartContainer ||
+                typeof Highcharts === "undefined"
+            ) {
+                return;
+            }
+
+
+            const chart =
+                Highcharts.charts.find(
+                    function (chart) {
+
+                        return (
+                            chart &&
+                            chart.renderTo ===
+                                chartContainer
+                        );
+                    }
+                );
+
+
+            if (!chart) {
+                return;
+            }
+
+
+            /* =================================================
+               GET PIE SERIES
+               ================================================= */
+
+            if (
+                !chart.series ||
+                !chart.series[0]
+            ) {
+                return;
+            }
+
+
+            const series =
+                chart.series[0];
+
+
+            /* =================================================
+               FIND WHICH LEGEND ROW WAS CLICKED
+               ================================================= */
+
+            const rows =
+                Array.from(
+                    legend.querySelectorAll(
+                        ".cost-legend-row"
+                    )
+                );
+
+
+            const rowIndex =
+                rows.indexOf(row);
+
+
+            if (rowIndex < 0) {
+                return;
+            }
+
+
+            const point =
+                series.points[rowIndex];
+
+
+            if (!point) {
+                return;
+            }
+
+
+            /* =================================================
+               TOGGLE PIE POINT
+               ================================================= */
+
+            const isVisible =
+                point.visible !== false;
+
+
+            point.setVisible(
+                !isVisible,
+                true
+            );
+
+
+            /* =================================================
+               UPDATE DISABLED STYLE
+               ================================================= */
+
+            if (isVisible) {
+
+                row.classList.add(
+                    "cost-legend-disabled"
+                );
+
+            } else {
+
+                row.classList.remove(
+                    "cost-legend-disabled"
+                );
+            }
+
+
+            /* =================================================
+               CALCULATE TOTAL OF VISIBLE ITEMS
+               ================================================= */
+
+            let visibleTotal = 0;
+
+
+            series.points.forEach(
+                function (chartPoint) {
+
+                    if (
+                        chartPoint.visible !== false
+                    ) {
+
+                        visibleTotal +=
+                            toNumber(
+                                chartPoint.y
+                            );
+                    }
+                }
+            );
+
+
+            /* =================================================
+               UPDATE ALL LEGEND PERCENTAGES
+               ================================================= */
+
+            rows.forEach(
+                function (legendRow, index) {
+
+                    const legendPoint =
+                        series.points[index];
+
+
+                    if (!legendPoint) {
+                        return;
+                    }
+
+
+                    const valueElement =
+                        legendRow.querySelector(
+                            ".cost-legend-value"
+                        );
+
+
+                    const percentElement =
+                        legendRow.querySelector(
+                            ".cost-legend-percent"
+                        );
+
+
+                    /* -----------------------------------------
+                       Hidden item
+                       ----------------------------------------- */
+
+                    if (
+                        legendPoint.visible === false
+                    ) {
+
+                        if (percentElement) {
+
+                            percentElement.textContent =
+                                "0.0%";
+                        }
+
+                        legendRow.classList.add(
+                            "cost-legend-disabled"
+                        );
+
+                        return;
+                    }
+
+
+                    /* -----------------------------------------
+                       Visible item
+                       ----------------------------------------- */
+
+                    const percentage =
+                        visibleTotal > 0
+                            ? (
+                                legendPoint.y /
+                                visibleTotal *
+                                100
+                            )
+                            : 0;
+
+
+                    if (percentElement) {
+
+                        percentElement.textContent =
+                            Highcharts.numberFormat(
+                                percentage,
+                                1
+                            ) + "%";
+                    }
+
+
+                    legendRow.classList.remove(
+                        "cost-legend-disabled"
+                    );
+                }
+            );
+
+        }
+    );
+
+})();   
+
 
         /* =====================================================
            DATE RANGE CHANGE EVENT
@@ -1806,12 +2074,4 @@ console.log("Full params:", params);
     );
 
 });
-
-
-
-
-
-
-
-
 

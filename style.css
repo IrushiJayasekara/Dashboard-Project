@@ -889,7 +889,45 @@
     }
 }
 
+/* =========================================================
+   COST COMPOSITION LEGEND CLICK / TOGGLE
+   ========================================================= */
 
+/* Make legend items clickable */
+.dashboard .cost-legend-row {
+    cursor: pointer;
+    transition: opacity 0.2s ease, background-color 0.2s ease;
+}
 
+/* Small hover effect */
+.dashboard .cost-legend-row:hover {
+    background: #f8fafc;
+    border-radius: 5px;
+}
+
+/* Disabled / hidden cost item */
+.dashboard .cost-legend-row.cost-legend-disabled {
+    opacity: 0.75;
+}
+
+/* Disabled item name */
+.dashboard .cost-legend-row.cost-legend-disabled .cost-legend-name {
+    color: #9ca3af;
+}
+
+/* Disabled item value */
+.dashboard .cost-legend-row.cost-legend-disabled .cost-legend-value {
+    color: #9ca3af;
+}
+
+/* Disabled item percentage */
+.dashboard .cost-legend-row.cost-legend-disabled .cost-legend-percent {
+    color: #9ca3af;
+}
+
+/* Disabled item dot */
+.dashboard .cost-legend-row.cost-legend-disabled .cost-legend-dot {
+    background-color: #cbd5e1 !important;
+}
 
 

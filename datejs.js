@@ -953,11 +953,39 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
 
-        const fdate =
-            dateFromElement.value;
+/*change date */
+      
+      const rawFromDate = dateFromElement.value;
+const rawToDate = dateToElement.value;
 
-        const todate =
-            dateToElement.value;
+// Convert yyyy-mm-dd → mm/dd/yyyy
+function formatCostChartDate(dateValue) {
+
+    if (!dateValue) {
+        return "";
+    }
+
+    const parts = dateValue.split("-");
+
+    if (parts.length !== 3) {
+        return dateValue;
+    }
+
+    const year = parts[0];
+    const month = parts[1];
+    const day = parts[2];
+
+    return month + "/" + day + "/" + year;
+}
+
+const fdate = formatCostChartDate(rawFromDate);
+const todate = formatCostChartDate(rawToDate);
+      
+      
+      
+      console.log("=== COST CHART DATE DEBUG ===");
+console.log("Selected From Date:", fdate);
+console.log("Selected To Date:", todate);
 
 
         /* =====================================================
@@ -1003,6 +1031,15 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         };
 
+      
+      /* DEBUG */
+console.log("=== AXPERT PARAMS ===");
+console.log("adsNames:", params.adsNames);
+console.log("sqlParams:", params.sqlParams);
+console.log("fdate sent:", params.sqlParams.fdate);
+console.log("todate sent:", params.sqlParams.todate);
+console.log("Full params:", params);
+      
 
         const caller =
             (
@@ -1769,6 +1806,12 @@ document.addEventListener("DOMContentLoaded", function () {
     );
 
 });
+
+
+
+
+
+
 
 
 
