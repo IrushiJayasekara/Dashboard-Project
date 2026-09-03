@@ -1,0 +1,336 @@
+<html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard</title>
+<!-- Your separate CSS file -->
+<link rel="stylesheet" href="style.css?v=14">
+<!-- Axpert CSS -->
+
+
+	
+	
+	
+	<link type="text/css" rel="stylesheet" href="../../adamuat/HTMLPages/Css/style.css_1788349826054.css?v=1788434826739">
+</head>
+
+<body>
+<div class="dashboard">
+
+<div class="date-range-card">
+<!-- TITLE -->
+<div class="date-range-title">
+<div class="date-range-title-main">
+                    Date Range
+</div>
+<div class="date-range-title-sub">
+                    Select period
+</div>
+</div>
+
+<!-- DATE INPUTS -->
+<div class="date-input-group">
+<!-- FROM DATE -->
+<div class="date-box">
+<span class="date-box-label">
+                        From Date
+</span>
+<input type="date" class="date-input from-date">
+</div>
+
+<!-- ARROW -->
+<span class="date-arrow">
+                    →
+</span>
+
+<!-- TO DATE -->
+<div class="date-box">
+<span class="date-box-label">
+                        To Date
+</span>
+<input type="date" class="date-input to-date">
+</div>
+</div>
+
+<!-- APPLY -->
+<button type="button" class="date-apply-btn" onclick="applyDateRange()">
+                Apply
+</button>
+
+<!-- CLEAR -->
+<button type="button" class="date-clear-btn" onclick="clearDateRange()">
+                Clear
+</button>
+
+<!-- SELECTED RANGE -->
+<div class="selected-range">
+<div class="selected-range-icon">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<!-- Calendar body -->
+<rect x="3.5" y="5" width="17" height="16" rx="2" stroke="currentColor" stroke-width="2"></rect>
+<!-- Top binding lines -->
+<line x1="7" y1="3" x2="7" y2="8" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
+<line x1="17" y1="3" x2="17" y2="8" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
+<!-- Header line -->
+<line x1="3.5" y1="9" x2="20.5" y2="9" stroke="currentColor" stroke-width="2"></line>
+<!-- Calendar grid -->
+<rect x="7" y="12" width="2" height="2" fill="currentColor"></rect>
+<rect x="11" y="12" width="2" height="2" fill="currentColor"></rect>
+<rect x="15" y="12" width="2" height="2" fill="currentColor"></rect>
+<rect x="7" y="16" width="2" height="2" fill="currentColor"></rect>
+<rect x="11" y="16" width="2" height="2" fill="currentColor"></rect>
+<rect x="15" y="16" width="2" height="2" fill="currentColor"></rect>
+</svg>
+</div>
+<div class="selected-range-text">
+<div class="selected-range-label">
+                        Selected Period
+</div>
+<div class="selected-range-value selected-range-value-text">
+                        Select dates
+</div>
+</div>
+</div>
+</div>
+<!-- =====================================================
+             TOP KPI CARDS
+             ===================================================== -->
+<div class="kpi-container">
+
+<!-- =================================================
+                 TOTAL M/C QTY
+                 Data Source:
+                 Total M/C Quantity
+                 ================================================= -->
+<div class="kpi-card" data-kpi="total-mc-quantity">
+<div class="kpi-icon kpi-icon-green">
+<span>
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<rect x="3" y="5" width="18" height="14" rx="1"></rect>
+<rect x="7" y="9" width="10" height="6"></rect>
+<line x1="9" y1="12" x2="15" y2="12"></line>
+</svg>
+</span>
+</div>
+<div class="kpi-content">
+<div class="kpi-title">
+                        Total M/C Qty
+</div>
+<div class="kpi-value" data-value="Total M/C Quantity">
+                        0
+</div>
+</div>
+</div>
+
+<!-- =================================================
+                 TEA QTY
+                 Data Source:
+                 TEA QTY
+                 ================================================= -->
+<div class="kpi-card" data-kpi="tea-qty">
+<div class="kpi-icon kpi-icon-orange">
+<span>
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<path d="M20 4C13 4 7 7 5 12c-1 3 1 6 4 7 5 1 9-4 9-9 0-2 1-4 2-6z"></path>
+<path d="M4 20c3-5 7-8 12-10"></path>
+</svg>
+</span>
+</div>
+<div class="kpi-content">
+<div class="kpi-title">
+                        Tea Qty (kg)
+</div>
+<div class="kpi-value" data-value="TEA QTY">
+                        0
+</div>
+</div>
+</div>
+
+<!-- =================================================
+                 VALUE SUMMARY
+                 ================================================= -->
+<div class="value-summary">
+
+<!-- =================================================
+                     VALUE SUMMARY HEADER
+                     ================================================= -->
+<div class="value-summary-header">
+<div class="value-summary-title">
+                        Value Summary
+</div>
+<div class="currency-switch">
+<button type="button" class="currency-option active" data-currency="LKR">
+                            LKR
+</button>
+<button type="button" class="currency-option" data-currency="USD">
+                            USD
+</button>
+</div>
+</div>
+
+<!-- =================================================
+                     VALUE CARDS
+                     ================================================= -->
+<div class="value-cards">
+
+<!-- =================================================
+                         SALES VALUE
+                         ================================================= -->
+<div class="kpi-card" data-kpi="sales-value">
+<div class="kpi-icon kpi-icon-green">
+<span>
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<circle cx="12" cy="12" r="9"></circle>
+<path d="M14.5 8.5c-.6-.6-1.5-1-2.5-1-1.4 0-2.5.8-2.5 1.8s1 1.5 2.5 1.8c1.5.3 2.5.8 2.5 1.8s-1.1 1.8-2.5 1.8c-1 0-1.9-.4-2.5-1">
+</path>
+<line x1="12" y1="6" x2="12" y2="18"></line>
+</svg>
+</span>
+</div>
+<div class="kpi-content">
+<div class="kpi-title">
+                                Sales Value
+</div>
+<div class="kpi-value" data-value="Sales Value">
+                                0.00
+</div>
+</div>
+</div>
+
+<!-- =================================================
+                         TOTAL COST
+                         ================================================= -->
+<div class="kpi-card" data-kpi="total-cost">
+<div class="kpi-icon kpi-icon-blue">
+<span>
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<path d="M6 3h9l3 3v15H6z"></path>
+<path d="M15 3v4h4"></path>
+<line x1="9" y1="11" x2="15" y2="11"></line>
+<line x1="9" y1="14" x2="15" y2="14"></line>
+<line x1="9" y1="17" x2="13" y2="17"></line>
+</svg>
+</span>
+</div>
+<div class="kpi-content">
+<div class="kpi-title">
+                                Total Cost
+</div>
+<div class="kpi-value" data-value="Total Cost">
+                                0.00
+</div>
+</div>
+</div>
+
+<!-- =================================================
+                         TOTAL PROFIT / LOSS
+                         ================================================= -->
+<div class="kpi-card" data-kpi="total-profit">
+<div class="kpi-icon kpi-icon-orange">
+<span>
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<rect x="4" y="4" width="16" height="16" rx="1"></rect>
+<line x1="8" y1="16" x2="8" y2="12"></line>
+<line x1="12" y1="16" x2="12" y2="9"></line>
+<line x1="16" y1="16" x2="16" y2="7"></line>
+</svg>
+</span>
+</div>
+<div class="kpi-content">
+<div class="kpi-title">
+                                Total Profit/Loss
+</div>
+<div class="kpi-value" data-value="Total CONTRIBUTION">
+                                0.00
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<!-- =================================================
+                 SCAS REPORT
+                 ================================================= -->
+<div class="kpi-card" data-kpi="scas-report" style="cursor:pointer;">
+<div class="kpi-icon kpi-icon-green">
+<span>
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+<defs>
+<linearGradient id="kpiGreen" x1="0" y1="0" x2="1" y2="1">
+<stop offset="100%" stop-color="#00a88a"></stop>
+</linearGradient>
+</defs>
+<!-- Outer square -->
+<rect x="4" y="4" width="16" height="16" rx="1" stroke="url(#kpiGreen)" stroke-width="2.5">
+</rect>
+<!-- Bars -->
+<rect x="7.5" y="11" width="2.5" height="6" rx="0.5" fill="#00a879"></rect>
+<rect x="11" y="8" width="2.5" height="9" rx="0.5" fill="#00a879"></rect>
+<rect x="14.5" y="13" width="2.5" height="4" rx="0.5" fill="#00a879"></rect>
+</svg>
+</span>
+</div>
+<div class="kpi-content">
+<div class="kpi-title">
+                        SCAS Report
+</div>
+<div class="kpi-value">
+                        Open
+</div>
+</div>
+</div>
+
+</div>
+
+<!-- =====================================================
+     DASHBOARD CONTENT
+     ===================================================== -->
+<div class="dashboard-content">
+
+    <!-- =================================================
+         COST COMPOSITION CHART
+         ================================================= -->
+    <div class="chart-card cost-composition-card">
+
+        <!-- CHART TITLE -->
+        <div class="chart-card-title">
+            Cost Composition (Total Cost)
+        </div>
+
+        <!-- CHART BODY -->
+        <div class="cost-composition-body">
+
+            <!-- DONUT CHART -->
+            <div class="cost-chart-wrapper">
+                <div id="costCompositionChart"></div>
+            </div>
+
+            <!-- CUSTOM LEGEND -->
+            <div id="costCompositionLegend" class="cost-composition-legend">
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+  
+
+</div>
+
+<!-- =========================================================
+         YOUR JAVASCRIPT
+         ========================================================= -->
+
+
+<!-- Highcharts library -->
+<script src="https://code.highcharts.com/highcharts.js"></script>
+
+<!-- Your Dashboard JavaScript -->
+
+  
+
+	
+
+	<script type="text/javascript" src="../../adamuat/HTMLPages/Js/script.js_1788349826054.js?v=1788434826740"></script>
+</body></html>

@@ -1,0 +1,795 @@
+
+/* =========================================================
+   DASHBOARD
+   ========================================================= */
+.dashboard {
+    width: 100%;
+    min-height: 100vh;
+    padding: 18px 20px;
+    box-sizing: border-box;
+    background: #f5f7fa;
+    font-family: Arial, sans-serif;
+}
+
+/* =========================================================
+   TOP KPI CONTAINER
+   ========================================================= */
+.dashboard .kpi-container {
+    width: 100%;
+    display: flex;
+    align-items: stretch;
+    gap: 10px;
+    padding: 10px;
+    box-sizing: border-box;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
+
+/* =========================================================
+   NORMAL KPI CARD
+   ========================================================= */
+.dashboard .kpi-card {
+    flex: 1;
+    min-width: 0;
+    height: 84px;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    box-sizing: border-box;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    transition:
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+/* =========================================================
+   KPI CARD HOVER
+   ========================================================= */
+.dashboard .kpi-card:hover {
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+    transform: translateY(-1px);
+}
+
+/* =========================================================
+   VALUE SUMMARY
+   ========================================================= */
+.dashboard .value-summary {
+    flex: 3;
+    min-width: 0;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 8px;
+    box-sizing: border-box;
+}
+
+/* =========================================================
+   VALUE SUMMARY HEADER
+   ========================================================= */
+.dashboard .value-summary-header {
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 4px 5px 4px;
+    box-sizing: border-box;
+}
+
+/* =========================================================
+   VALUE SUMMARY TITLE
+   ========================================================= */
+.dashboard .value-summary-title {
+    font-size: 10px;
+    font-weight: 600;
+    color: #111827;
+}
+
+/* =========================================================
+   CURRENCY SWITCH
+   ========================================================= */
+.dashboard .currency-switch {
+    display: flex;
+    align-items: center;
+    border: 1px solid #e5e7eb;
+    background: #f9fafb;
+    border-radius: 14px;
+    height: 22px;
+    overflow: hidden;
+}
+
+/* =========================================================
+   CURRENCY OPTION
+   ========================================================= */
+.dashboard .currency-option {
+    border: none;
+    background: transparent;
+    color: #6b7280;
+    font-size: 9px;
+    font-weight: 500;
+    height: 22px;
+    min-width: 34px;
+    padding: 0 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+/* =========================================================
+   ACTIVE CURRENCY
+   ========================================================= */
+.dashboard .currency-option.active {
+    background: #4f46e5;
+    color: #ffffff;
+    border-radius: 12px;
+}
+
+/* =========================================================
+   VALUE CARDS
+   ========================================================= */
+.dashboard .value-cards {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+}
+
+/* =========================================================
+   VALUE CARDS - KPI
+   ========================================================= */
+.dashboard .value-cards .kpi-card {
+    flex: 1;
+    height: 64px;
+    padding: 8px;
+}
+
+/* =========================================================
+   KPI ICON
+   ========================================================= */
+.dashboard .kpi-icon {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+    flex-shrink: 0;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+/* =========================================================
+   GREEN ICON
+   ========================================================= */
+.dashboard .kpi-icon-green {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+/* =========================================================
+   ORANGE ICON
+   ========================================================= */
+.dashboard .kpi-icon-orange {
+    background: #fff4e6;
+    color: #f97316;
+}
+
+/* =========================================================
+   BLUE ICON
+   ========================================================= */
+.dashboard .kpi-icon-blue {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+/* =========================================================
+   PURPLE ICON
+   ========================================================= */
+.dashboard .kpi-icon-purple {
+    background: #ede9fe;
+    color: #7c3aed;
+}
+
+/* =========================================================
+   KPI CONTENT
+   ========================================================= */
+.dashboard .kpi-content {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 1;
+}
+
+/* =========================================================
+   KPI TITLE
+   ========================================================= */
+.dashboard .kpi-title {
+    display: flex;
+    align-items: center;
+    font-size: 11px;
+    line-height: 16px;
+    font-weight: 500;
+    margin-bottom: 3px;
+    color: #111827;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* =========================================================
+   KPI VALUE
+   ========================================================= */
+.dashboard .kpi-value {
+    font-size: 16px;
+    line-height: 20px;
+    font-weight: 500;
+    color: #0f172a;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* =========================================================
+   FUTURE DASHBOARD CONTENT
+   ========================================================= */
+.dashboard .dashboard-content {
+    width: 100%;
+    margin-top: 16px;
+}
+
+/* =========================================================
+   FUTURE DASHBOARD ROW
+   ========================================================= */
+.dashboard .dashboard-row {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+/* =========================================================
+   RESPONSIVE - 1400px
+   ========================================================= */
+@media (max-width: 1400px) {
+    .dashboard .kpi-container {
+        flex-wrap: wrap;
+    }
+    .dashboard .kpi-container > .kpi-card {
+        flex: 1 1 calc(25% - 10px);
+    }
+    .dashboard .value-summary {
+        flex: 1 1 100%;
+        order: 3;
+    }
+}
+
+/* =========================================================
+   RESPONSIVE - 1000px
+   ========================================================= */
+@media (max-width: 1000px) {
+    .dashboard {
+        padding: 14px;
+    }
+    .dashboard .kpi-container {
+        gap: 6px;
+    }
+    .dashboard .kpi-container > .kpi-card {
+        flex: 1 1 calc(33.333% - 6px);
+    }
+    .dashboard .kpi-card {
+        padding: 8px;
+    }
+    .dashboard .kpi-icon {
+        width: 34px;
+        height: 34px;
+        min-width: 34px;
+        margin-right: 7px;
+        font-size: 18px;
+    }
+    .dashboard .kpi-value {
+        font-size: 14px;
+    }
+}
+
+/* =========================================================
+   RESPONSIVE - 750px
+   ========================================================= */
+@media (max-width: 750px) {
+    .dashboard .kpi-container {
+        flex-wrap: wrap;
+    }
+    .dashboard .kpi-container > .kpi-card {
+        flex: 1 1 calc(50% - 6px);
+    }
+    .dashboard .value-summary {
+        flex: 1 1 100%;
+    }
+    .dashboard .dashboard-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* =========================================================
+   RESPONSIVE - 480px
+   ========================================================= */
+@media (max-width: 480px) {
+    .dashboard {
+        padding: 10px;
+    }
+    .dashboard .kpi-container {
+        flex-direction: column;
+        gap: 10px;
+        padding: 8px;
+    }
+    .dashboard .kpi-container > .kpi-card {
+        width: 100%;
+        flex: none;
+        height: 82px;
+    }
+    .dashboard .value-summary {
+        width: 100%;
+        flex: none;
+    }
+    .dashboard .value-cards {
+        flex-direction: column;
+    }
+    .dashboard .value-cards .kpi-card {
+        height: 64px;
+    }
+    .dashboard .kpi-icon {
+        width: 38px;
+        height: 38px;
+        min-width: 38px;
+        margin-right: 10px;
+        font-size: 18px;
+    }
+    .dashboard .kpi-title {
+        font-size: 11px;
+    }
+    .dashboard .kpi-value {
+        font-size: 15px;
+    }
+}
+/*  DATE RANGE CARD */
+.date-range-card{
+    width:100%;
+    height:62px !important;
+    min-height:62px !important;
+    max-height:62px !important;
+    background:#ffffff;
+    border:1px solid #e5e7eb;
+    border-radius:10px;
+    padding:8px 14px;
+    box-sizing:border-box;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    overflow:hidden;
+}
+.dasboard-cards[data-card="{{cardname}}"]{
+    height:62px !important;
+    min-height:62px !important;
+    max-height:62px !important;
+    overflow:hidden !important;
+}
+.date-range-card{
+    height:62px;
+    min-height:62px;
+    margin:0;
+}
+/* Title */
+.date-range-title{
+    display:flex;
+    flex-direction:column;
+    min-width:135px;
+}
+.date-range-title-main{
+    font-size:13px;
+    font-weight:700;
+    color:#111827;
+    margin-bottom:4px;
+}
+.date-range-title-sub{
+    font-size:11px;
+    color:#64748b;
+}
+/* Date section */
+.date-input-group{
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+/* Individual date box */
+.date-box{
+    position:relative;
+    width:155px;
+}
+.date-box-label{
+    position:absolute;
+    top:-7px;
+    left:12px;
+    background:#ffffff;
+    padding:0 5px;
+    font-size:10px;
+    font-weight:600;
+    color:#64748b;
+    z-index:2;
+}
+/* Date input */
+.date-input{
+    width:100%;
+    height:42px;
+    border:1px solid #d1d5db;
+    border-radius:8px;
+    background:#ffffff;
+    color:#111827;
+    font-size:13px;
+    font-weight:600;
+    padding:0 12px;
+    box-sizing:border-box;
+    outline:none;
+    cursor:pointer;
+    font-family:inherit;
+}
+.date-input:hover{
+    border-color:#94a3b8;
+}
+.date-input:focus{
+    border-color:#2563eb;
+    box-shadow:0 0 0 2px rgba(37,99,235,0.10);
+}
+/* Native calendar icon */
+.date-input::-webkit-calendar-picker-indicator{
+    cursor:pointer;
+    opacity:0.75;
+    width:18px;
+    height:18px;
+}
+/* Arrow between dates */
+.date-arrow{
+    color:#94a3b8;
+    font-size:18px;
+    margin-top:2px;
+}
+/* Apply button */
+.date-apply-btn{
+    height:42px;
+    padding:0 18px;
+    border:none;
+    border-radius:8px;
+    background:#2563eb;
+    color:#ffffff;
+    font-size:12px;
+    font-weight:700;
+    cursor:pointer;
+    white-space:nowrap;
+    transition:all .2s ease;
+}
+.date-apply-btn:hover{
+    background:#1d4ed8;
+}
+.date-apply-btn:active{
+    transform:scale(.98);
+}
+/* Clear button */
+.date-clear-btn{
+    height:42px;
+    padding:0 12px;
+    border:1px solid #d1d5db;
+    border-radius:8px;
+    background:#ffffff;
+    color:#475569;
+    font-size:12px;
+    font-weight:600;
+    cursor:pointer;
+    white-space:nowrap;
+}
+.date-clear-btn:hover{
+    background:#f8fafc;
+}
+/* Selected range */
+.selected-range{
+    margin-left:auto;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    white-space:nowrap;
+}
+.selected-range-icon{
+    width:30px;
+    height:30px;
+    border-radius:7px;
+    background:#dbeafe;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+.selected-range-icon{
+    width:42px;
+    height:42px;
+    min-width:42px;
+    border-radius:10px;
+    background:#dbeafe;
+    color:#2563eb;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+}
+.selected-range-icon svg{
+    width:24px;
+    height:24px;
+    display:block;
+}
+.selected-range-text{
+    display:flex;
+    flex-direction:column;
+}
+.selected-range-label{
+    font-size:10px;
+    color:#64748b;
+}
+.selected-range-value{
+    font-size:12px;
+    font-weight:700;
+    color:#111827;
+}
+/* RESPONSIVE */
+@media(max-width:1000px){
+    .date-range-card{
+        flex-wrap:wrap;
+    }
+    .selected-range{
+        margin-left:0;
+    }
+}
+@media(max-width:700px){
+    .date-range-card{
+        flex-direction:column;
+        align-items:stretch;
+        gap:12px;
+    }
+    .date-range-title{
+        min-width:auto;
+    }
+    .date-input-group{
+        width:100%;
+    }
+    .date-box{
+        flex:1;
+        width:auto;
+    }
+    .selected-range{
+        margin-left:0;
+    }
+}
+
+
+/* =========================================================
+   COST COMPOSITION CHART
+   ========================================================= */
+
+.dashboard .chart-card {
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-sizing: border-box;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
+
+
+/* =========================================================
+   COST COMPOSITION CARD
+   ========================================================= */
+
+.dashboard .cost-composition-card {
+    margin-top: 16px;
+    min-height: 490px;
+    padding: 28px 30px;
+}
+
+
+/* =========================================================
+   CHART TITLE
+   ========================================================= */
+
+.dashboard .chart-card-title {
+    font-size: 20px;
+    line-height: 26px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 18px;
+}
+
+
+/* =========================================================
+   CHART BODY
+   ========================================================= */
+
+.dashboard .cost-composition-body {
+    width: 100%;
+    min-height: 420px;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   DONUT CHART AREA
+   ========================================================= */
+
+.dashboard .cost-chart-wrapper {
+    width: 58%;
+    height: 410px;
+    min-width: 0;
+    position: relative;
+}
+
+
+/* =========================================================
+   HIGHCHART CONTAINER
+   ========================================================= */
+
+.dashboard #costCompositionChart {
+    width: 100%;
+    height: 410px;
+}
+
+
+/* =========================================================
+   CUSTOM LEGEND
+   ========================================================= */
+
+.dashboard .cost-composition-legend {
+    width: 42%;
+    padding-left: 20px;
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   LEGEND ROW
+   ========================================================= */
+
+.dashboard .cost-legend-row {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 12px minmax(0, 1fr) 100px 55px;
+    column-gap: 6px;
+    align-items: center;
+    min-height: 31px;
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   LEGEND DOT
+   ========================================================= */
+
+.dashboard .cost-legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: block;
+}
+
+
+/* =========================================================
+   LEGEND NAME
+   ========================================================= */
+
+.dashboard .cost-legend-name {
+    min-width: 0;
+    font-size: 13px;
+    color: #111827;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+/* =========================================================
+   LEGEND VALUE
+   ========================================================= */
+
+.dashboard .cost-legend-value {
+    font-size: 13px;
+    color: #111827;
+    text-align: right;
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   LEGEND PERCENTAGE
+   ========================================================= */
+
+.dashboard .cost-legend-percent {
+    font-size: 13px;
+    color: #475569;
+    text-align: right;
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   MOBILE / SMALL SCREEN
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .dashboard .cost-composition-card {
+        padding: 22px;
+    }
+
+    .dashboard .cost-composition-body {
+        flex-direction: column;
+        min-height: auto;
+    }
+
+    .dashboard .cost-chart-wrapper {
+        width: 100%;
+        height: 360px;
+    }
+
+    .dashboard #costCompositionChart {
+        height: 360px;
+    }
+
+    .dashboard .cost-composition-legend {
+        width: 100%;
+        padding-left: 0;
+        margin-top: 10px;
+    }
+
+}
+
+
+/* =========================================================
+   VERY SMALL SCREEN
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+    .dashboard .cost-composition-card {
+        padding: 16px;
+    }
+
+    .dashboard .chart-card-title {
+        font-size: 17px;
+    }
+
+    .dashboard .cost-chart-wrapper {
+        height: 300px;
+    }
+
+    .dashboard #costCompositionChart {
+        height: 300px;
+    }
+
+    .dashboard .cost-legend-row {
+        grid-template-columns: 12px minmax(0, 1fr) 80px 48px;
+    }
+
+    .dashboard .cost-legend-name,
+    .dashboard .cost-legend-value,
+    .dashboard .cost-legend-percent {
+        font-size: 11px;
+    }
+
+}
+
+
+
+
+
+
+
+
+
