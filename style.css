@@ -568,7 +568,6 @@
     }
 }
 
-
 /* =========================================================
    COST COMPOSITION CHART
    ========================================================= */
@@ -591,6 +590,7 @@
     margin-top: 16px;
     min-height: 490px;
     padding: 28px 30px;
+    box-sizing: border-box;
 }
 
 
@@ -603,7 +603,7 @@
     line-height: 26px;
     font-weight: 700;
     color: #111827;
-    margin-bottom: 18px;
+    margin-bottom: 10px;
 }
 
 
@@ -614,8 +614,10 @@
 .dashboard .cost-composition-body {
     width: 100%;
     min-height: 420px;
+
     display: flex;
     align-items: center;
+
     box-sizing: border-box;
 }
 
@@ -625,10 +627,15 @@
    ========================================================= */
 
 .dashboard .cost-chart-wrapper {
-    width: 58%;
+    width: 55%;
     height: 410px;
+
     min-width: 0;
     position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 
@@ -647,23 +654,54 @@
    ========================================================= */
 
 .dashboard .cost-composition-legend {
-    width: 42%;
-    padding-left: 20px;
+    width: 45%;
+
+    padding-left: 25px;
+    padding-right: 10px;
+
     box-sizing: border-box;
 }
 
 
 /* =========================================================
    LEGEND ROW
+   IMPORTANT:
+   JS creates only 2 children:
+      1. cost-legend-left
+      2. cost-legend-right
+   Therefore use FLEX here.
    ========================================================= */
 
 .dashboard .cost-legend-row {
     width: 100%;
-    display: grid;
-    grid-template-columns: 12px minmax(0, 1fr) 100px 55px;
-    column-gap: 6px;
-    align-items: center;
+
     min-height: 31px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   LEGEND LEFT SIDE
+   DOT + NAME
+   ========================================================= */
+
+.dashboard .cost-legend-left {
+    min-width: 0;
+
+    flex: 1;
+
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
+    padding-right: 12px;
+
     box-sizing: border-box;
 }
 
@@ -675,7 +713,11 @@
 .dashboard .cost-legend-dot {
     width: 10px;
     height: 10px;
+
+    min-width: 10px;
+
     border-radius: 50%;
+
     display: block;
 }
 
@@ -686,11 +728,39 @@
 
 .dashboard .cost-legend-name {
     min-width: 0;
+
     font-size: 13px;
+    line-height: 18px;
+
     color: #111827;
+
     white-space: nowrap;
+
     overflow: hidden;
+
     text-overflow: ellipsis;
+}
+
+
+/* =========================================================
+   LEGEND RIGHT SIDE
+   VALUE + PERCENTAGE
+   ========================================================= */
+
+.dashboard .cost-legend-right {
+    width: 155px;
+
+    min-width: 155px;
+
+    display: grid;
+
+    grid-template-columns: 95px 55px;
+
+    column-gap: 5px;
+
+    align-items: center;
+
+    box-sizing: border-box;
 }
 
 
@@ -700,8 +770,11 @@
 
 .dashboard .cost-legend-value {
     font-size: 13px;
+
     color: #111827;
+
     text-align: right;
+
     white-space: nowrap;
 }
 
@@ -712,9 +785,22 @@
 
 .dashboard .cost-legend-percent {
     font-size: 13px;
+
     color: #475569;
+
     text-align: right;
+
     white-space: nowrap;
+}
+
+
+/* =========================================================
+   TABLE-LIKE ALIGNMENT
+   ========================================================= */
+
+.dashboard .cost-legend-value,
+.dashboard .cost-legend-percent {
+    font-variant-numeric: tabular-nums;
 }
 
 
@@ -730,6 +816,7 @@
 
     .dashboard .cost-composition-body {
         flex-direction: column;
+
         min-height: auto;
     }
 
@@ -739,15 +826,23 @@
     }
 
     .dashboard #costCompositionChart {
+        width: 100%;
         height: 360px;
     }
 
     .dashboard .cost-composition-legend {
         width: 100%;
-        padding-left: 0;
+
+        padding-left: 10px;
+        padding-right: 10px;
+
         margin-top: 10px;
     }
 
+    .dashboard .cost-legend-right {
+        width: 155px;
+        min-width: 155px;
+    }
 }
 
 
@@ -763,6 +858,7 @@
 
     .dashboard .chart-card-title {
         font-size: 17px;
+        line-height: 22px;
     }
 
     .dashboard .cost-chart-wrapper {
@@ -774,7 +870,7 @@
     }
 
     .dashboard .cost-legend-row {
-        grid-template-columns: 12px minmax(0, 1fr) 80px 48px;
+        min-height: 29px;
     }
 
     .dashboard .cost-legend-name,
@@ -783,7 +879,16 @@
         font-size: 11px;
     }
 
+    .dashboard .cost-legend-right {
+        width: 125px;
+        min-width: 125px;
+
+        grid-template-columns: 75px 45px;
+
+        column-gap: 5px;
+    }
 }
+
 
 
 
