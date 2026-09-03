@@ -1,4 +1,3 @@
- 
 <html lang="en"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +7,10 @@
 <!-- Axpert CSS -->
 
 
- 
-	<link type="text/css" rel="stylesheet" href="../../adamuat/HTMLPages/Css/style.css_1787634779764.css?v=1788036140637">
+	
+	
+	
+	<link type="text/css" rel="stylesheet" href="../../adamuat/HTMLPages/Css/style.css_1788349826054.css?v=1788434826739">
 </head>
 
 <body>
@@ -282,13 +283,38 @@
 </div>
 
 <!-- =====================================================
-             FUTURE DASHBOARD CONTENT
-             ===================================================== -->
+     DASHBOARD CONTENT
+     ===================================================== -->
 <div class="dashboard-content">
-<!--
-                Add other dashboard sections here.
-            -->
+
+    <!-- =================================================
+         COST COMPOSITION CHART
+         ================================================= -->
+    <div class="chart-card cost-composition-card">
+
+        <!-- CHART TITLE -->
+        <div class="chart-card-title">
+            Cost Composition (Total Cost)
+        </div>
+
+        <!-- CHART BODY -->
+        <div class="cost-composition-body">
+
+            <!-- DONUT CHART -->
+            <div class="cost-chart-wrapper">
+                <div id="costCompositionChart"></div>
+            </div>
+
+            <!-- CUSTOM LEGEND -->
+            <div id="costCompositionLegend" class="cost-composition-legend">
+            </div>
+
+        </div>
+
+    </div>
+
 </div>
+  
 
 </div>
 
@@ -297,6 +323,14 @@
          ========================================================= -->
 
 
+<!-- Highcharts library -->
+<script src="https://code.highcharts.com/highcharts.js"></script>
 
-<script type="text/javascript" src="../../adamuat/HTMLPages/Js/script.js_1787634779764.js?v=1788036140637"></script>
+<!-- Your Dashboard JavaScript -->
+
+  
+
+	
+
+	<script type="text/javascript" src="../../adamuat/HTMLPages/Js/script.js_1788349826054.js?v=1788434826740"></script>
 </body></html>
