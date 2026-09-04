@@ -2024,45 +2024,1188 @@ console.log("Full params:", params);
         );
     }
 
+  
+  /* =========================================================
+   REVENUE VS COST VS CONTRIBUTION BY BUYER
+   ---------------------------------------------------------
+   NEW ADDITIVE CHART
+   Does not modify:
+   - KPI cards
+   - Cost Composition chart
+   - Existing date range functions
+   - Existing currency functions
+   ========================================================= */
 
-    /* =========================================================
-       DATE RANGE CHANGE EVENT
-       ========================================================= */
 
-    document.addEventListener(
-        "dashboardDateRangeChanged",
-        function (event) {
+/* =========================================================
+   CLEAR BUYER PERFORMANCE CHART
+   ========================================================= */
 
-            console.log(
-                "Cost chart date event:",
-                event.detail
+function clearBuyerPerformanceChart() {
+
+    const container =
+        document.getElementById(
+            "buyerPerformanceChart"
+        );
+
+
+    if (!container) {
+        return;
+    }
+
+
+    /* -----------------------------------------
+       Destroy existing Highcharts instance
+       ----------------------------------------- */
+
+    if (
+        typeof Highcharts !== "undefined"
+    ) {
+
+        const existingChart =
+            Highcharts.charts.find(
+                function (chart) {
+
+                    return (
+                        chart &&
+                        chart.renderTo === container
+                    );
+                }
             );
 
 
+        if (existingChart) {
+
+            existingChart.destroy();
+        }
+    }
+
+
+    container.innerHTML = "";
+}
+
+
+/* =========================================================
+   EXTRACT AXPERT RESPONSE DATA
+   ---------------------------------------------------------
+   Uses the same response structure already used
+   by your existing Cost Composition chart.
+   ========================================================= */
+
+function extractBuyerPerformanceData(response) {
+
+    let parsed = response;
+
+
+    /* -----------------------------------------
+       Parse string response
+       ----------------------------------------- */
+
+    if (
+        typeof parsed === "string"
+    ) {
+
+        try {
+
+            parsed =
+                JSON.parse(parsed);
+
+        } catch (error) {
+
+            console.error(
+                "Unable to parse buyer chart response:",
+                error
+            );
+
+            return [];
+        }
+    }
+
+
+    /* -----------------------------------------
+       Parse d property
+       ----------------------------------------- */
+
+    if (
+        parsed &&
+        typeof parsed.d === "string"
+    ) {
+
+        try {
+
+            parsed.d =
+                JSON.parse(parsed.d);
+
+        } catch (error) {
+
+            console.error(
+                "Unable to parse buyer chart d property:",
+                error
+            );
+        }
+    }
+
+
+    /* -----------------------------------------
+       Extract result data
+       ----------------------------------------- */
+
+    let resultData = [];
+
+
+    if (
+        parsed &&
+        parsed.result &&
+        Array.isArray(
+            parsed.result.data
+        )
+    ) {
+
+        parsed.result.data.forEach(
+            function (item) {
+
+                if (
+                    item &&
+                    Array.isArray(
+                        item.data
+                    )
+                ) {
+
+                    resultData =
+                        resultData.concat(
+                            item.data
+                        );
+
+                } else if (item) {
+
+                    resultData.push(item);
+                }
+            }
+        );
+    }
+
+
+    /* -----------------------------------------
+       Fallback
+       ----------------------------------------- */
+
+    if (
+        resultData.length === 0 &&
+        parsed &&
+        Array.isArray(
+            parsed.data
+        )
+    ) {
+
+        resultData =
+            parsed.data;
+    }
+
+
+    return resultData;
+}
+
+
+/* =========================================================
+   LOAD ONE BUYER DATA SOURCE
+   ========================================================= */
+
+function loadBuyerPerformanceDataSource(
+    adsName,
+    fromDate,
+    toDate
+) {
+
+    return new Promise(
+        function (resolve) {
+
+            const params = {
+
+                adsNames: [
+                    adsName
+                ],
+
+                refreshCache: false,
+
+                sqlParams: {
+
+                    fdate:
+                        formatBuyerChartDate(
+                            fromDate
+                        ),
+
+                    todate:
+                        formatBuyerChartDate(
+                            toDate
+                        )
+                },
+
+                props: {
+
+                    ADS: true,
+
+                    pageno: 1,
+
+                    pagesize: 5000
+                }
+            };
+
+
+            const caller =
+                (
+                    typeof parent !== "undefined" &&
+                    typeof parent.GetDataFromAxList === "function"
+                )
+                    ? parent
+                    : window;
+
+
             if (
-                !event.detail ||
-                !event.detail.fromDate ||
-                !event.detail.toDate
+                !caller ||
+                typeof caller.GetDataFromAxList !==
+                    "function"
             ) {
 
-                clearCostCompositionChart();
+                console.error(
+                    "GetDataFromAxList is not available for:",
+                    adsName
+                );
+
+                resolve([]);
 
                 return;
             }
 
 
-            loadCostCompositionChart();
+            console.log(
+                "Loading buyer data source:",
+                adsName,
+                params.sqlParams
+            );
+
+
+            try {
+
+                caller.GetDataFromAxList(
+                    params,
+                    function (response) {
+
+                        const data =
+                            extractBuyerPerformanceData(
+                                response
+                            );
+
+
+                        console.log(
+                            "Buyer source result:",
+                            adsName,
+                            data
+                        );
+
+
+                        resolve(data);
+                    }
+                );
+
+            } catch (error) {
+
+                console.error(
+                    "Error loading buyer data source:",
+                    adsName,
+                    error
+                );
+
+                resolve([]);
+            }
+        }
+    );
+}
+
+
+/* =========================================================
+   FORMAT DATE FOR BUYER CHART
+   ---------------------------------------------------------
+   yyyy-mm-dd → mm/dd/yyyy
+   ========================================================= */
+
+function formatBuyerChartDate(
+    dateValue
+) {
+
+    if (!dateValue) {
+        return "";
+    }
+
+
+    const parts =
+        dateValue.split("-");
+
+
+    if (parts.length !== 3) {
+        return dateValue;
+    }
+
+
+    const year =
+        parts[0];
+
+    const month =
+        parts[1];
+
+    const day =
+        parts[2];
+
+
+    return (
+        month +
+        "/" +
+        day +
+        "/" +
+        year
+    );
+}
+
+
+/* =========================================================
+   GET CATEGORY FROM SOURCE ROW
+   ========================================================= */
+
+function getBuyerCategory(row) {
+
+    if (!row) {
+        return "";
+    }
+
+
+    return String(
+        row["Category"] ??
+        row["category"] ??
+        ""
+    ).trim();
+}
+
+
+/* =========================================================
+   AGGREGATE BUYER DATA
+   ---------------------------------------------------------
+   Example:
+
+   CUSTOMER020  444.84
+   CUSTOMER020  407.93
+   CUSTOMER020  234.90
+
+   becomes:
+
+   CUSTOMER020  1087.67
+   ========================================================= */
+
+function aggregateBuyerValues(
+    data,
+    valueFields
+) {
+
+    const totals = {};
+
+
+    if (!Array.isArray(data)) {
+        return totals;
+    }
+
+
+    data.forEach(
+        function (row) {
+
+            const category =
+                getBuyerCategory(row);
+
+
+            if (!category) {
+                return;
+            }
+
+
+            /* -----------------------------------------
+               Find the value field
+               ----------------------------------------- */
+
+            let value = 0;
+
+
+            for (
+                let i = 0;
+                i < valueFields.length;
+                i++
+            ) {
+
+                const field =
+                    valueFields[i];
+
+
+                if (
+                    row[field] !==
+                    undefined &&
+                    row[field] !==
+                    null &&
+                    row[field] !== ""
+                ) {
+
+                    value =
+                        toNumber(
+                            row[field]
+                        );
+
+                    break;
+                }
+            }
+
+
+            /* -----------------------------------------
+               Add to customer total
+               ----------------------------------------- */
+
+            if (
+                !Object.prototype.hasOwnProperty.call(
+                    totals,
+                    category
+                )
+            ) {
+
+                totals[category] = 0;
+            }
+
+
+            totals[category] += value;
         }
     );
 
 
+    return totals;
+}
+
+
+/* =========================================================
+   LOAD REVENUE VS COST VS CONTRIBUTION
+   ========================================================= */
+
+function loadBuyerPerformanceChart() {
+
+    const chartContainer =
+        document.getElementById(
+            "buyerPerformanceChart"
+        );
+
+
+    if (!chartContainer) {
+
+        console.error(
+            "Buyer performance chart container not found."
+        );
+
+        return;
+    }
+
+
+    if (
+        typeof Highcharts ===
+        "undefined"
+    ) {
+
+        console.error(
+            "Highcharts is not loaded."
+        );
+
+        return;
+    }
+
+
+    /* =====================================================
+       GET SELECTED DATES
+       ===================================================== */
+
+    const dateFromElement =
+        document.querySelector(
+            ".from-date"
+        );
+
+    const dateToElement =
+        document.querySelector(
+            ".to-date"
+        );
+
+
+    if (
+        !dateFromElement ||
+        !dateToElement
+    ) {
+
+        console.error(
+            "Buyer chart date elements not found."
+        );
+
+        return;
+    }
+
+
+    const rawFromDate =
+        dateFromElement.value;
+
+    const rawToDate =
+        dateToElement.value;
+
+
+    if (
+        !rawFromDate ||
+        !rawToDate
+    ) {
+
+        clearBuyerPerformanceChart();
+
+        return;
+    }
+
+
+    console.log(
+        "===================================="
+    );
+
+    console.log(
+        "BUYER PERFORMANCE CHART"
+    );
+
+    console.log(
+        "From:",
+        rawFromDate
+    );
+
+    console.log(
+        "To:",
+        rawToDate
+    );
+
+
+    /* =====================================================
+       DATA SOURCE NAMES
+       ===================================================== */
+
+    const revenueSource =
+        "rev_cost_contrib_revenuedb";
+
+    const costSource =
+        "rev_cost_contrib_costdb";
+
+    const contributionSource =
+        "rev_cost_contrib_contrbdb";
+
+
+    /* =====================================================
+       LOAD ALL THREE DATA SOURCES
+       ===================================================== */
+
+    Promise.all([
+
+        loadBuyerPerformanceDataSource(
+            revenueSource,
+            rawFromDate,
+            rawToDate
+        ),
+
+        loadBuyerPerformanceDataSource(
+            costSource,
+            rawFromDate,
+            rawToDate
+        ),
+
+        loadBuyerPerformanceDataSource(
+            contributionSource,
+            rawFromDate,
+            rawToDate
+        )
+
+    ])
+    .then(
+        function (results) {
+
+            const revenueData =
+                results[0];
+
+            const costData =
+                results[1];
+
+            const contributionData =
+                results[2];
+
+
+            console.log(
+                "Revenue raw data:",
+                revenueData
+            );
+
+            console.log(
+                "Cost raw data:",
+                costData
+            );
+
+            console.log(
+                "Contribution raw data:",
+                contributionData
+            );
+
+
+            /* =================================================
+               AGGREGATE REVENUE
+               ================================================= */
+
+            const revenueTotals =
+                aggregateBuyerValues(
+                    revenueData,
+                    [
+                        "Revenue",
+                        "Total Revenue",
+                        "Sales Value"
+                    ]
+                );
+
+
+            /* =================================================
+               AGGREGATE COST
+               ================================================= */
+
+            const costTotals =
+                aggregateBuyerValues(
+                    costData,
+                    [
+                        "Total Cost",
+                        "Cost"
+                    ]
+                );
+
+
+            /* =================================================
+               AGGREGATE CONTRIBUTION
+               ================================================= */
+
+            const contributionTotals =
+                aggregateBuyerValues(
+                    contributionData,
+                    [
+                        "Contribution",
+                        "Total CONTRIBUTION",
+                        "Profit/Loss"
+                    ]
+                );
+
+
+            console.log(
+                "Aggregated Revenue:",
+                revenueTotals
+            );
+
+            console.log(
+                "Aggregated Cost:",
+                costTotals
+            );
+
+            console.log(
+                "Aggregated Contribution:",
+                contributionTotals
+            );
+
+
+            /* =================================================
+               TOP 6 REVENUE CUSTOMERS
+               ================================================= */
+
+            const top6Customers =
+                Object.keys(
+                    revenueTotals
+                )
+                .map(
+                    function (customer) {
+
+                        return {
+
+                            customer:
+                                customer,
+
+                            revenue:
+                                revenueTotals[
+                                    customer
+                                ]
+                        };
+                    }
+                )
+                .sort(
+                    function (a, b) {
+
+                        return (
+                            b.revenue -
+                            a.revenue
+                        );
+                    }
+                )
+                .slice(
+                    0,
+                    6
+                );
+
+
+            console.log(
+                "TOP 6 REVENUE CUSTOMERS:",
+                top6Customers
+            );
+
+
+            /* =================================================
+               BUILD FINAL CHART DATA
+               ================================================= */
+
+            const categories = [];
+
+            const revenueValues = [];
+
+            const costValues = [];
+
+            const contributionValues = [];
+
+
+            top6Customers.forEach(
+                function (item) {
+
+                    const customer =
+                        item.customer;
+
+
+                    categories.push(
+                        customer
+                    );
+
+
+                    revenueValues.push(
+                        item.revenue
+                    );
+
+
+                    costValues.push(
+                        costTotals[
+                            customer
+                        ] || 0
+                    );
+
+
+                    contributionValues.push(
+                        contributionTotals[
+                            customer
+                        ] || 0
+                    );
+                }
+            );
+
+
+            console.log(
+                "Final buyer categories:",
+                categories
+            );
+
+            console.log(
+                "Final revenue values:",
+                revenueValues
+            );
+
+            console.log(
+                "Final cost values:",
+                costValues
+            );
+
+            console.log(
+                "Final contribution values:",
+                contributionValues
+            );
+
+
+            /* =================================================
+               NO DATA
+               ================================================= */
+
+            if (
+                categories.length === 0
+            ) {
+
+                clearBuyerPerformanceChart();
+
+
+                chartContainer.innerHTML =
+                    '<div style="' +
+                    'text-align:center;' +
+                    'padding:120px 20px;' +
+                    'color:#888;' +
+                    'font-size:14px;' +
+                    '">' +
+                    "No revenue data available" +
+                    "</div>";
+
+
+                return;
+            }
+
+
+            /* =================================================
+               RENDER
+               ================================================= */
+
+            renderBuyerPerformanceChart(
+                categories,
+                revenueValues,
+                costValues,
+                contributionValues
+            );
+        }
+    )
+    .catch(
+        function (error) {
+
+            console.error(
+                "Error loading buyer performance chart:",
+                error
+            );
+
+            clearBuyerPerformanceChart();
+        }
+    );
+}
+
+
+/* =========================================================
+   RENDER BUYER PERFORMANCE CHART
+   ========================================================= */
+
+function renderBuyerPerformanceChart(
+    categories,
+    revenueValues,
+    costValues,
+    contributionValues
+) {
+
+    const chartContainer =
+        document.getElementById(
+            "buyerPerformanceChart"
+        );
+
+
+    if (!chartContainer) {
+        return;
+    }
+
+
+    clearBuyerPerformanceChart();
+
+
+    /* =====================================================
+       HIGHCHARTS COLUMN CHART
+       ===================================================== */
+
+    Highcharts.chart(
+        chartContainer,
+        {
+
+            chart: {
+
+                type: "column",
+
+                backgroundColor:
+                    "transparent",
+
+                height: 410,
+
+                spacing: [
+                    10,
+                    0,
+                    0,
+                    0
+                ]
+            },
+
+
+            title: {
+                text: null
+            },
+
+
+            credits: {
+                enabled: false
+            },
+
+
+            exporting: {
+                enabled: false
+            },
+
+
+            xAxis: {
+
+                categories:
+                    categories,
+
+                lineColor:
+                    "#d1d5db",
+
+                tickColor:
+                    "#d1d5db",
+
+                labels: {
+
+                    style: {
+
+                        color:
+                            "#374151",
+
+                        fontSize:
+                            "11px"
+                    }
+                }
+            },
+
+
+            yAxis: {
+
+                min: 0,
+
+                title: {
+                    text: null
+                },
+
+                gridLineColor:
+                    "#e5e7eb",
+
+                labels: {
+
+                    style: {
+
+                        color:
+                            "#64748b",
+
+                        fontSize:
+                            "11px"
+                    },
+
+                    formatter:
+                        function () {
+
+                            return Highcharts.numberFormat(
+                                this.value,
+                                0
+                            );
+                        }
+                }
+            },
+
+
+            legend: {
+
+                enabled: true,
+
+                align: "center",
+
+                verticalAlign: "top",
+
+                itemStyle: {
+
+                    fontSize:
+                        "11px",
+
+                    fontWeight:
+                        "500",
+
+                    color:
+                        "#374151"
+                },
+
+                symbolRadius: 0
+            },
+
+
+            tooltip: {
+
+                shared: true,
+
+                useHTML: true,
+
+                backgroundColor:
+                    "#ffffff",
+
+                borderColor:
+                    "#d1d5db",
+
+                borderWidth: 1,
+
+                shadow: true,
+
+                formatter:
+                    function () {
+
+                        let html =
+                            "<div style='" +
+                            "font-size:12px;" +
+                            "font-weight:600;" +
+                            "margin-bottom:6px;" +
+                            "'>" +
+                            this.x +
+                            "</div>";
+
+
+                        this.points.forEach(
+                            function (point) {
+
+                                html +=
+                                    "<div style='" +
+                                    "font-size:12px;" +
+                                    "line-height:20px;" +
+                                    "'>" +
+                                    "<span style='" +
+                                    "color:" +
+                                    point.color +
+                                    "'>●</span> " +
+                                    point.series.name +
+                                    ": <b>" +
+                                    Highcharts.numberFormat(
+                                        point.y,
+                                        2
+                                    ) +
+                                    "</b>" +
+                                    "</div>";
+                            }
+                        );
+
+
+                        return html;
+                    }
+            },
+
+
+            plotOptions: {
+
+                column: {
+
+                    borderWidth: 0,
+
+                    borderRadius: 3,
+
+                    pointPadding:
+                        0.08,
+
+                    groupPadding:
+                        0.12,
+
+                    dataLabels: {
+
+                        enabled: false
+                    }
+                },
+
+                series: {
+
+                    animation: true
+                }
+            },
+
+
+            series: [
+
+                {
+
+                    name:
+                        "Sales Value",
+
+                    data:
+                        revenueValues,
+
+                    color:
+                        "#2563EB"
+                },
+
+                {
+
+                    name:
+                        "Total Cost",
+
+                    data:
+                        costValues,
+
+                    color:
+                        "#F59E0B"
+                },
+
+                {
+
+                    name:
+                        "Profit/Loss",
+
+                    data:
+                        contributionValues,
+
+                    color:
+                        "#16A34A"
+                }
+            ]
+        }
+    );
+}
+
     /* =========================================================
-       INITIAL LOAD
+       DATE RANGE CHANGE EVENT
        ========================================================= */
 
-    loadSummaryCards();
+  document.addEventListener(
+    "dashboardDateRangeChanged",
+    function (event) {
 
-    loadCostCompositionChart();
+        console.log(
+            "Dashboard date event:",
+            event.detail
+        );
+
+
+        if (
+            !event.detail ||
+            !event.detail.fromDate ||
+            !event.detail.toDate
+        ) {
+
+            /* Existing chart */
+            clearCostCompositionChart();
+
+
+            /* New buyer chart */
+            clearBuyerPerformanceChart();
+
+
+            return;
+        }
+
+
+        /* =====================================================
+           EXISTING COST COMPOSITION CHART
+           ===================================================== */
+
+        loadCostCompositionChart();
+
+
+        /* =====================================================
+           NEW REVENUE VS COST VS CONTRIBUTION CHART
+           ===================================================== */
+
+        loadBuyerPerformanceChart();
+    }
+);
+
+/* =========================================================
+   INITIAL LOAD
+   ========================================================= */
+
+loadSummaryCards();
+
+loadCostCompositionChart();
+
+loadBuyerPerformanceChart();
 
 
     /* =========================================================
@@ -2074,4 +3217,5 @@ console.log("Full params:", params);
     );
 
 });
+
 

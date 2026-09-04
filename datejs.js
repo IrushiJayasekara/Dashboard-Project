@@ -1,1817 +1,1959 @@
+
 document.addEventListener("DOMContentLoaded", function () {
+ 
+    /* =====================================================
 
-    /* =========================================================
-       DASHBOARD ELEMENTS
-       ========================================================= */
+       DASHBOARD INITIALIZATION
 
+       ===================================================== */
+ 
     const dashboard = document.querySelector(".dashboard");
-
+ 
     if (!dashboard) {
-        console.error("Dashboard element not found.");
+ 
+        console.warn("Dashboard container not found.");
+ 
         return;
+
     }
+ 
+ 
+    /* =====================================================
 
-
-    /* =========================================================
        DATE RANGE ELEMENTS
-       ========================================================= */
 
-    const fromDate = document.querySelector(".from-date");
-    const toDate = document.querySelector(".to-date");
-    const rangeText = document.querySelector(".selected-range-value-text");
+       ===================================================== */
+ 
+    const fromDate =
 
+        dashboard.querySelector(".from-date");
+ 
+    const toDate =
 
-    /* =========================================================
-       DATE FUNCTIONS
-       ========================================================= */
+        dashboard.querySelector(".to-date");
+ 
+    const rangeText =
 
-    function formatDateForInput(date) {
+        dashboard.querySelector(
 
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, "0");
-        const day = String(date.getDate()).padStart(2, "0");
+            ".selected-range-value-text"
 
-        return year + "-" + month + "-" + day;
-    }
+        );
+ 
+ 
+    /* =====================================================
 
+       CHECK DATE ELEMENTS
 
-    function formatDisplayDate(dateString) {
+       ===================================================== */
+ 
+    if (!fromDate || !toDate || !rangeText) {
+ 
+        console.warn(
 
-        if (!dateString) {
-            return "";
-        }
+            "Date range elements not found."
 
-        const parts = dateString.split("-");
+        );
+ 
+    } else {
+ 
+ 
+        /* =================================================
 
-        if (parts.length !== 3) {
-            return dateString;
-        }
+           DEFAULT DATES
 
-        return parts[2] + "/" + parts[1] + "/" + parts[0];
-    }
-
-
-    function updateRangeText() {
-
-        if (!fromDate || !toDate || !rangeText) {
-            return;
-        }
-
-        if (fromDate.value && toDate.value) {
-
-            rangeText.textContent =
-                formatDisplayDate(fromDate.value) +
-                " → " +
-                formatDisplayDate(toDate.value);
-
-        } else {
-
-            rangeText.textContent = "Select dates";
-        }
-    }
-
-
-    /* =========================================================
-       DEFAULT DATE RANGE
-       Last 30 days
-       ========================================================= */
-
-    if (fromDate && toDate && rangeText) {
-
+           ================================================= */
+ 
         const today = new Date();
-
+ 
         const previousMonth = new Date(
+
             today.getFullYear(),
+
             today.getMonth(),
+
             today.getDate() - 30
+
         );
+ 
+ 
+        /* =================================================
 
-        if (!fromDate.value) {
-            fromDate.value = formatDateForInput(previousMonth);
-        }
+           FORMAT DATE FOR INPUT
 
-        if (!toDate.value) {
-            toDate.value = formatDateForInput(today);
-        }
+           ================================================= */
+ 
+        function formatDateForInput(date) {
+ 
+            const year =
 
-        toDate.min = fromDate.value;
+                date.getFullYear();
+ 
+            const month =
 
-        updateRangeText();
+                String(
 
+                    date.getMonth() + 1
 
-        /* =====================================================
-           FROM DATE CHANGE
-           ===================================================== */
+                ).padStart(2, "0");
+ 
+            const day =
 
-        fromDate.addEventListener("change", function () {
+                String(
 
-            if (!fromDate.value) {
-                toDate.removeAttribute("min");
-                updateRangeText();
-                return;
-            }
+                    date.getDate()
 
-            toDate.min = fromDate.value;
+                ).padStart(2, "0");
+ 
+            return (
 
-            if (
-                toDate.value &&
-                toDate.value < fromDate.value
-            ) {
-                toDate.value = fromDate.value;
-            }
+                year +
 
-            updateRangeText();
-        });
+                "-" +
 
+                month +
 
-        /* =====================================================
-           TO DATE CHANGE
-           ===================================================== */
+                "-" +
 
-        toDate.addEventListener("change", function () {
+                day
 
-            if (
-                fromDate.value &&
-                toDate.value &&
-                toDate.value < fromDate.value
-            ) {
-
-                alert("To Date cannot be earlier than From Date.");
-
-                toDate.value = fromDate.value;
-            }
-
-            updateRangeText();
-        });
-    }
-
-
-    /* =========================================================
-       APPLY DATE RANGE
-       ========================================================= */
-
-    window.applyDateRange = function () {
-
-        if (!fromDate || !toDate) {
-            return;
-        }
-
-        const selectedFromDate = fromDate.value;
-        const selectedToDate = toDate.value;
-
-        if (!selectedFromDate || !selectedToDate) {
-
-            alert("Please select both From Date and To Date.");
-            return;
-        }
-
-
-        if (selectedToDate < selectedFromDate) {
-
-            alert("To Date cannot be earlier than From Date.");
-            return;
-        }
-
-
-        /* Store globally */
-        window.dashboardFromDate = selectedFromDate;
-        window.dashboardToDate = selectedToDate;
-
-
-        /* Update displayed range */
-        updateRangeText();
-
-
-        /* =====================================================
-           DATE RANGE CHANGE EVENT
-           ===================================================== */
-
-        document.dispatchEvent(
-            new CustomEvent("dashboardDateRangeChanged", {
-                detail: {
-                    fromDate: selectedFromDate,
-                    toDate: selectedToDate
-                }
-            })
-        );
-
-
-        /* =====================================================
-           BUTTON FEEDBACK
-           ===================================================== */
-
-        const button = document.querySelector(".date-apply-btn");
-
-        if (button) {
-
-            const originalText = button.textContent;
-
-            button.textContent = "Applied ✓";
-
-            setTimeout(function () {
-                button.textContent = originalText;
-            }, 1500);
-        }
-    };
-
-
-    /* =========================================================
-       CLEAR DATE RANGE
-       ========================================================= */
-
-    window.clearDateRange = function () {
-
-        if (!fromDate || !toDate) {
-            return;
-        }
-
-
-        fromDate.value = "";
-        toDate.value = "";
-
-        toDate.removeAttribute("min");
-
-
-        if (rangeText) {
-            rangeText.textContent = "Select dates";
-        }
-
-
-        /* Clear global values */
-        window.dashboardFromDate = null;
-        window.dashboardToDate = null;
-
-
-        /* =====================================================
-           DATE RANGE CLEAR EVENT
-           ===================================================== */
-
-        document.dispatchEvent(
-            new CustomEvent("dashboardDateRangeChanged", {
-                detail: {
-                    fromDate: null,
-                    toDate: null
-                }
-            })
-        );
-
-
-        /* =====================================================
-           BUTTON FEEDBACK
-           ===================================================== */
-
-        const button = document.querySelector(".date-clear-btn");
-
-        if (button) {
-
-            const originalText = button.textContent;
-
-            button.textContent = "Cleared ✓";
-
-            setTimeout(function () {
-                button.textContent = originalText;
-            }, 1500);
-        }
-    };
-
-
-    /* =========================================================
-       DASHBOARD DATA
-       ========================================================= */
-
-    let dashboardData = null;
-    let reportLink = "";
-
-
-    /* =========================================================
-       KPI ELEMENT
-       ========================================================= */
-
-    function getKpiElement(dataName) {
-
-        return document.querySelector(
-            '.kpi-value[data-value="' + dataName + '"]'
-        );
-    }
-
-
-    /* =========================================================
-       SET KPI VALUE
-       ========================================================= */
-
-    function setKpiValue(dataName, value) {
-
-        const element = getKpiElement(dataName);
-
-        if (!element) {
-            return;
-        }
-
-        element.textContent = value;
-    }
-
-
-    /* =========================================================
-       NUMBER CONVERSION
-       ========================================================= */
-
-    function toNumber(value) {
-
-        if (
-            value === null ||
-            value === undefined ||
-            value === ""
-        ) {
-            return 0;
-        }
-
-        if (typeof value === "number") {
-            return value;
-        }
-
-        const cleanedValue = String(value)
-            .replace(/,/g, "")
-            .replace(/%/g, "")
-            .trim();
-
-        const numberValue = Number(cleanedValue);
-
-        return isNaN(numberValue) ? 0 : numberValue;
-    }
-
-
-    /* =========================================================
-       NUMBER FORMAT
-       ========================================================= */
-
-    function formatNumber(value, decimals) {
-
-        const numberValue = toNumber(value);
-
-        return numberValue.toLocaleString("en-US", {
-            minimumFractionDigits: decimals,
-            maximumFractionDigits: decimals
-        });
-    }
-
-
-    /* =========================================================
-       LOAD SUMMARY CARDS
-       ========================================================= */
-
-    function loadSummaryCards() {
-
-        if (
-            typeof GetDataFromAxList !== "function" &&
-            !(
-                typeof parent !== "undefined" &&
-                typeof parent.GetDataFromAxList === "function"
-            )
-        ) {
-
-            console.error(
-                "GetDataFromAxList function is not available."
             );
 
-            return;
         }
+ 
+ 
+        /* =================================================
 
+           DEFAULT: LAST 30 DAYS
 
-        const params = {
+           ================================================= */
+ 
+        fromDate.value =
 
-            adsNames: [
-                "summary_cards_plugin"
-            ],
+            formatDateForInput(previousMonth);
+ 
+        toDate.value =
 
-            refreshCache: false,
+            formatDateForInput(today);
+ 
+ 
+        /* =================================================
 
-            sqlParams: {},
+           FORMAT DISPLAY DATE
 
-            props: {
-                ADS: true,
-                pageno: 1,
-                pagesize: 500
+           ================================================= */
+ 
+        function formatDisplayDate(value) {
+ 
+            if (!value) {
+ 
+                return "";
+ 
             }
-        };
+ 
+ 
+            const parts =
 
+                value.split("-");
+ 
+ 
+            const date =
 
-        const caller =
-            (
-                typeof parent !== "undefined" &&
-                typeof parent.GetDataFromAxList === "function"
-            )
-                ? parent
-                : window;
+                new Date(
 
+                    Number(parts[0]),
 
-        try {
+                    Number(parts[1]) - 1,
 
-            caller.GetDataFromAxList(
-                params,
-                function (response) {
+                    Number(parts[2])
 
-                    try {
-
-                        let parsed = response;
-
-
-                        /* -----------------------------------------
-                           Parse string response
-                           ----------------------------------------- */
-
-                        if (typeof parsed === "string") {
-
-                            parsed = JSON.parse(parsed);
-                        }
-
-
-                        /* -----------------------------------------
-                           Parse d property
-                           ----------------------------------------- */
-
-                        if (
-                            parsed &&
-                            typeof parsed.d === "string"
-                        ) {
-
-                            parsed.d = JSON.parse(parsed.d);
-                        }
-
-
-                        /* -----------------------------------------
-                           Extract result data
-                           ----------------------------------------- */
-
-                        let resultData = [];
-
-
-                        if (
-                            parsed &&
-                            parsed.result &&
-                            Array.isArray(parsed.result.data)
-                        ) {
-
-                            parsed.result.data.forEach(function (item) {
-
-                                if (
-                                    item &&
-                                    Array.isArray(item.data)
-                                ) {
-
-                                    resultData =
-                                        resultData.concat(item.data);
-
-                                } else if (item) {
-
-                                    resultData.push(item);
-                                }
-                            });
-                        }
-
-
-                        /* -----------------------------------------
-                           Fallback data formats
-                           ----------------------------------------- */
-
-                        if (
-                            resultData.length === 0 &&
-                            parsed &&
-                            Array.isArray(parsed.data)
-                        ) {
-
-                            resultData = parsed.data;
-                        }
-
-
-                        if (resultData.length === 0) {
-
-                            console.warn(
-                                "No summary card data returned."
-                            );
-
-                            return;
-                        }
-
-
-                        dashboardData = resultData[0];
-
-
-                        /* -----------------------------------------
-                           Report link
-                           ----------------------------------------- */
-
-                        reportLink =
-                            dashboardData.link || "";
-
-
-                        /* -----------------------------------------
-                           Update cards
-                           ----------------------------------------- */
-
-                        updateDashboardCards(
-                            dashboardData
-                        );
-
-                    } catch (error) {
-
-                        console.error(
-                            "Error processing summary card response:",
-                            error
-                        );
-                    }
-                }
-            );
-
-        } catch (error) {
-
-            console.error(
-                "Error loading summary cards:",
-                error
-            );
-        }
-    }
-
-
-    /* =========================================================
-       UPDATE DASHBOARD CARDS
-       ========================================================= */
-
-    function updateDashboardCards(item) {
-
-        if (!item) {
-            return;
-        }
-
-
-        /* =====================================================
-           TOTAL M/C QUANTITY
-           ===================================================== */
-
-        setKpiValue(
-            "Total M/C Quantity",
-            formatNumber(
-                item["Total M/C Quantity"],
-                0
-            )
-        );
-
-
-        /* =====================================================
-           TEA QTY
-           ===================================================== */
-
-        setKpiValue(
-            "TEA QTY",
-            formatNumber(
-                item["TEA QTY"],
-                0
-            )
-        );
-
-
-        /* =====================================================
-           SALES VALUE
-           ===================================================== */
-
-        updateCurrency("LKR");
-    }
-
-
-    /* =========================================================
-       CURRENCY UPDATE
-       ========================================================= */
-
-    function updateCurrency(currency) {
-
-        if (!dashboardData) {
-            return;
-        }
-
-
-        /* =====================================================
-           SALES
-           ===================================================== */
-
-        let salesValue = 0;
-
-
-        if (currency === "USD") {
-
-            salesValue =
-                toNumber(
-                    dashboardData["Total FCV"]
                 );
+ 
+ 
+            return date.toLocaleDateString(
 
-        } else {
+                "en-US",
 
-            salesValue =
-                toNumber(
-                    dashboardData["Revenue"]
-                );
-        }
-
-
-        setKpiValue(
-            "Sales Value",
-            formatNumber(
-                salesValue,
-                2
-            )
-        );
-
-
-        /* =====================================================
-           TOTAL COST
-           ===================================================== */
-
-        let totalCost =
-            toNumber(
-                dashboardData["Total Cost"]
-            );
-
-
-        if (currency === "USD") {
-
-            const exchangeRate =
-                toNumber(
-                    dashboardData["EXRATE"]
-                );
-
-            if (exchangeRate > 0) {
-
-                totalCost =
-                    totalCost / exchangeRate;
-            }
-        }
-
-
-        setKpiValue(
-            "Total Cost",
-            formatNumber(
-                totalCost,
-                2
-            )
-        );
-
-
-        /* =====================================================
-           TOTAL CONTRIBUTION
-           ===================================================== */
-
-        let contribution =
-            toNumber(
-                dashboardData["Total CONTRIBUTION"]
-            );
-
-
-        if (currency === "USD") {
-
-            const exchangeRate =
-                toNumber(
-                    dashboardData["EXRATE"]
-                );
-
-            if (exchangeRate > 0) {
-
-                contribution =
-                    contribution / exchangeRate;
-            }
-        }
-
-
-        setKpiValue(
-            "Total CONTRIBUTION",
-            formatNumber(
-                contribution,
-                2
-            )
-        );
-
-
-        /* =====================================================
-           UPDATE CURRENCY BUTTONS
-           ===================================================== */
-
-        document
-            .querySelectorAll(".currency-option")
-            .forEach(function (button) {
-
-                button.classList.toggle(
-                    "active",
-                    button.dataset.currency === currency
-                );
-            });
-    }
-
-
-    /* =========================================================
-       CURRENCY BUTTON EVENTS
-       ========================================================= */
-
-    document
-        .querySelectorAll(".currency-option")
-        .forEach(function (button) {
-
-            button.addEventListener(
-                "click",
-                function () {
-
-                    const currency =
-                        this.dataset.currency;
-
-                    updateCurrency(currency);
-                }
-            );
-        });
-
-
-    /* =========================================================
-       SCAS REPORT
-       ========================================================= */
-
-    const scasCard =
-        document.querySelector(
-            '[data-kpi="scas-report"]'
-        );
-
-
-    if (scasCard) {
-
-        scasCard.addEventListener(
-            "click",
-            function () {
-
-                if (!reportLink) {
-
-                    console.warn(
-                        "SCAS report link is not available."
-                    );
-
-                    return;
-                }
-
-
-                if (
-                    typeof navigateToUrl === "function"
-                ) {
-
-                    navigateToUrl(reportLink);
-
-                } else {
-
-                    window.open(
-                        reportLink,
-                        "_blank"
-                    );
-                }
-            }
-        );
-    }
-
-
-    /* =========================================================
-       KPI HOVER
-       ========================================================= */
-
-    document
-        .querySelectorAll(".kpi-card")
-        .forEach(function (card) {
-
-            card.addEventListener(
-                "mouseenter",
-                function () {
-
-                    this.classList.add("active");
-                }
-            );
-
-
-            card.addEventListener(
-                "mouseleave",
-                function () {
-
-                    this.classList.remove("active");
-                }
-            );
-        });
-
-
-    /* =========================================================
-       COST COMPOSITION CHART
-       ========================================================= */
-
-    const costCompositionColors = [
-        "#00A88A",
-        "#3B82F6",
-        "#F59E0B",
-        "#8B5CF6",
-        "#EF4444",
-        "#14B8A6",
-        "#EC4899",
-        "#6366F1"
-    ];
-
-
-    /* =========================================================
-       GET COST VALUE
-       ========================================================= */
-
-    function getCostCompositionValue(
-        data,
-        fieldName
-    ) {
-
-        if (!data || !data[0]) {
-            return 0;
-        }
-
-        return toNumber(
-            data[0][fieldName]
-        );
-    }
-
-
-    /* =========================================================
-       CLEAR COST CHART
-       ========================================================= */
-
-    function clearCostCompositionChart() {
-
-        const chartContainer =
-            document.getElementById(
-                "costCompositionChart"
-            );
-
-        const legend =
-            document.getElementById(
-                "costCompositionLegend"
-            );
-
-
-        /* -----------------------------------------
-           Destroy existing Highcharts instance
-           ----------------------------------------- */
-
-        if (
-            typeof Highcharts !== "undefined" &&
-            chartContainer
-        ) {
-
-            const existingChart =
-                Highcharts.charts.find(function (chart) {
-
-                    return (
-                        chart &&
-                        chart.renderTo === chartContainer
-                    );
-                });
-
-
-            if (existingChart) {
-
-                existingChart.destroy();
-            }
-        }
-
-
-        if (chartContainer) {
-
-            chartContainer.innerHTML = "";
-        }
-
-
-        if (legend) {
-
-            legend.innerHTML = "";
-        }
-    }
-
-
-    /* =========================================================
-       LOAD COST COMPOSITION CHART
-       ========================================================= */
-
-    function loadCostCompositionChart() {
-
-        const chartContainer =
-            document.getElementById(
-                "costCompositionChart"
-            );
-
-
-        if (!chartContainer) {
-
-            console.error(
-                "Cost composition chart container not found."
-            );
-
-            return;
-        }
-
-
-        /* =====================================================
-           CHECK HIGHCHARTS
-           ===================================================== */
-
-        if (
-            typeof Highcharts === "undefined"
-        ) {
-
-            console.error(
-                "Highcharts library is not loaded."
-            );
-
-            return;
-        }
-
-
-        /* =====================================================
-           GET DATES
-           ===================================================== */
-
-        const dateFromElement =
-            document.querySelector(
-                ".from-date"
-            );
-
-        const dateToElement =
-            document.querySelector(
-                ".to-date"
-            );
-
-
-        if (
-            !dateFromElement ||
-            !dateToElement
-        ) {
-
-            console.error(
-                "Date range elements not found."
-            );
-
-            return;
-        }
-
-
-/*change date */
-      
-      const rawFromDate = dateFromElement.value;
-const rawToDate = dateToElement.value;
-
-// Convert yyyy-mm-dd → mm/dd/yyyy
-function formatCostChartDate(dateValue) {
-
-    if (!dateValue) {
-        return "";
-    }
-
-    const parts = dateValue.split("-");
-
-    if (parts.length !== 3) {
-        return dateValue;
-    }
-
-    const year = parts[0];
-    const month = parts[1];
-    const day = parts[2];
-
-    return month + "/" + day + "/" + year;
-}
-
-const fdate = formatCostChartDate(rawFromDate);
-const todate = formatCostChartDate(rawToDate);
-      
-      
-      
-      console.log("=== COST CHART DATE DEBUG ===");
-console.log("Selected From Date:", fdate);
-console.log("Selected To Date:", todate);
-
-
-        /* =====================================================
-           VALIDATE DATES
-           ===================================================== */
-
-        if (!fdate || !todate) {
-
-            clearCostCompositionChart();
-
-            return;
-        }
-
-
-        console.log(
-            "Loading cost composition:",
-            fdate,
-            todate
-        );
-
-
-        /* =====================================================
-           AXPERT PARAMETERS
-           ===================================================== */
-
-        const params = {
-
-            adsNames: [
-                "summary_cards_plugin_daterange"
-            ],
-
-            refreshCache: false,
-
-            sqlParams: {
-                fdate: fdate,
-                todate: todate
-            },
-
-            props: {
-                ADS: true,
-                pageno: 1,
-                pagesize: 500
-            }
-        };
-
-      
-      /* DEBUG */
-console.log("=== AXPERT PARAMS ===");
-console.log("adsNames:", params.adsNames);
-console.log("sqlParams:", params.sqlParams);
-console.log("fdate sent:", params.sqlParams.fdate);
-console.log("todate sent:", params.sqlParams.todate);
-console.log("Full params:", params);
-      
-
-        const caller =
-            (
-                typeof parent !== "undefined" &&
-                typeof parent.GetDataFromAxList === "function"
-            )
-                ? parent
-                : window;
-
-
-        if (
-            typeof caller.GetDataFromAxList !==
-            "function"
-        ) {
-
-            console.error(
-                "GetDataFromAxList function is not available."
-            );
-
-            return;
-        }
-
-
-        try {
-
-            caller.GetDataFromAxList(
-                params,
-                function (response) {
-
-                    try {
-
-                        let parsed = response;
-
-
-                        /* -----------------------------------------
-                           Parse string response
-                           ----------------------------------------- */
-
-                        if (
-                            typeof parsed === "string"
-                        ) {
-
-                            parsed =
-                                JSON.parse(parsed);
-                        }
-
-
-                        /* -----------------------------------------
-                           Parse d property
-                           ----------------------------------------- */
-
-                        if (
-                            parsed &&
-                            typeof parsed.d === "string"
-                        ) {
-
-                            parsed.d =
-                                JSON.parse(parsed.d);
-                        }
-
-
-                        /* -----------------------------------------
-                           Extract data
-                           ----------------------------------------- */
-
-                        let resultData = [];
-
-
-                        if (
-                            parsed &&
-                            parsed.result &&
-                            Array.isArray(
-                                parsed.result.data
-                            )
-                        ) {
-
-                            parsed.result.data.forEach(
-                                function (item) {
-
-                                    if (
-                                        item &&
-                                        Array.isArray(
-                                            item.data
-                                        )
-                                    ) {
-
-                                        resultData =
-                                            resultData.concat(
-                                                item.data
-                                            );
-
-                                    } else if (item) {
-
-                                        resultData.push(
-                                            item
-                                        );
-                                    }
-                                }
-                            );
-                        }
-
-
-                        /* -----------------------------------------
-                           Fallback
-                           ----------------------------------------- */
-
-                        if (
-                            resultData.length === 0 &&
-                            parsed &&
-                            Array.isArray(
-                                parsed.data
-                            )
-                        ) {
-
-                            resultData =
-                                parsed.data;
-                        }
-
-
-                        if (
-                            resultData.length === 0
-                        ) {
-
-                            console.warn(
-                                "No cost composition data returned."
-                            );
-
-                            clearCostCompositionChart();
-
-                            return;
-                        }
-
-
-                        console.log(
-                            "Cost composition data:",
-                            resultData
-                        );
-
-
-                        /* =================================================
-                           BUILD CHART DATA
-                           ================================================= */
-
-                        const item =
-                            resultData[0];
-
-
-                        const fields = [
-
-                            {
-                                name: "Tea Cost",
-                                field: "Tea Cost"
-                            },
-
-                            {
-                                name: "PACK MATERIAL",
-                                field: "PACK MATERIAL"
-                            },
-
-                            {
-                                name: "INFUSION",
-                                field: "INFUSION"
-                            },
-
-                            {
-                                name: "BLEND EXP",
-                                field: "BLEND EXP"
-                            },
-
-                            {
-                                name: "SHIP EXP",
-                                field: "SHIP EXP"
-                            },
-
-                            {
-                                name: "Transport",
-                                field: "Transport"
-                            },
-
-                            {
-                                name: "INSURANCE",
-                                field: "INSURANCE"
-                            },
-
-                            {
-                                name: "FUMIGATION",
-                                field: "FUMIGATION"
-                            }
-                        ];
-
-
-                        const chartData = [];
-
-
-                        fields.forEach(
-                            function (field) {
-
-                                const value =
-                                    toNumber(
-                                        item[field.field]
-                                    );
-
-
-                                if (value > 0) {
-
-                                    chartData.push({
-
-                                        name: field.name,
-
-                                        y: value
-                                    });
-                                }
-                            }
-                        );
-
-
-                        /* =================================================
-                           TOTAL COST
-                           ================================================= */
-
-                        const totalCost =
-                            toNumber(
-                                item["Total Cost"]
-                            );
-
-
-                        /* =================================================
-                           RENDER
-                           ================================================= */
-
-                        renderCostCompositionChart(
-                            chartData,
-                            totalCost
-                        );
-
-                    } catch (error) {
-
-                        console.error(
-                            "Error processing cost composition response:",
-                            error
-                        );
-
-                        clearCostCompositionChart();
-                    }
-                }
-            );
-
-        } catch (error) {
-
-            console.error(
-                "Error loading cost composition:",
-                error
-            );
-
-            clearCostCompositionChart();
-        }
-    }
-
-
-    /* =========================================================
-       RENDER COST COMPOSITION CHART
-       ========================================================= */
-
-    function renderCostCompositionChart(
-        chartData,
-        totalCost
-    ) {
-
-        const chartContainer =
-            document.getElementById(
-                "costCompositionChart"
-            );
-
-
-        const legend =
-            document.getElementById(
-                "costCompositionLegend"
-            );
-
-
-        if (!chartContainer) {
-            return;
-        }
-
-
-        if (!legend) {
-            return;
-        }
-
-
-        /* =====================================================
-           CLEAR OLD CONTENT
-           ===================================================== */
-
-        clearCostCompositionChart();
-
-
-        if (
-            !chartData ||
-            chartData.length === 0
-        ) {
-
-            chartContainer.innerHTML =
-                '<div style="text-align:center;padding:40px;color:#888;">' +
-                "No cost data available" +
-                "</div>";
-
-            return;
-        }
-
-
-        /* =====================================================
-           HIGHCHARTS DONUT
-           ===================================================== */
-
-        const chart =
-            Highcharts.chart(
-                chartContainer,
                 {
 
-                    chart: {
+                    month: "short",
 
-                        type: "pie",
+                    day: "numeric",
 
-                        backgroundColor:
-                            "transparent",
+                    year: "numeric"
 
-                        height: 330,
+                }
 
-                        spacing: [
-                            0,
-                            0,
-                            0,
-                            0
-                        ]
-                    },
+            );
 
+        }
+ 
+ 
+        /* =================================================
 
-                    title: {
-                        text: null
-                    },
+           UPDATE RANGE TEXT
 
+           ================================================= */
+ 
+        function updateRangeText() {
+ 
+            if (
 
-                    credits: {
-                        enabled: false
-                    },
+                !fromDate.value ||
 
+                !toDate.value
 
-                    exporting: {
-                        enabled: false
-                    },
+            ) {
+ 
+                rangeText.textContent =
 
+                    "Select dates";
+ 
+                return;
 
-                    tooltip: {
+            }
+ 
+ 
+            const from =
 
-                        useHTML: true,
+                formatDisplayDate(
 
-                        backgroundColor:
-                            "#ffffff",
+                    fromDate.value
 
-                        borderWidth: 1,
+                );
+ 
+ 
+            const to =
 
-                        shadow: true,
+                formatDisplayDate(
 
+                    toDate.value
 
-                        formatter: function () {
+                );
+ 
+ 
+            rangeText.textContent =
 
-                            return (
-                                "<b>" +
-                                this.point.name +
-                                "</b>" +
-                                Highcharts.numberFormat(
-                                    this.y,
-                                    2
-                                ) +
-                                " M" +
-                                Highcharts.numberFormat(
-                                    this.percentage,
-                                    1
-                                ) +
-                                "%"
-                            );
-                        }
-                    },
+                from + " – " + to;
 
+        }
+ 
+ 
+        /* =================================================
 
-                    plotOptions: {
+           FROM DATE CHANGE
 
-                        pie: {
+           ================================================= */
+ 
+        fromDate.addEventListener(
 
-                            innerSize: "58%",
+            "change",
 
-                            size: "86%",
+            function () {
+ 
+                /* To Date cannot be before From Date */
+ 
+                if (fromDate.value) {
+ 
+                    toDate.min =
 
-                            center: [
-                                "50%",
-                                "50%"
-                            ],
+                        fromDate.value;
 
-                            borderWidth: 2,
+                }
+ 
+ 
+                if (
 
-                            borderColor: "#ffffff",
+                    toDate.value &&
 
-                            dataLabels: {
-                                enabled: false
-                            },
+                    fromDate.value &&
 
-                            showInLegend: false,
+                    toDate.value <
 
-                            allowPointSelect: false,
+                    fromDate.value
 
-                            animation: true
-                        }
-                    },
+                ) {
+ 
+                    toDate.value =
 
+                        fromDate.value;
 
-                    series: [
+                }
+ 
+ 
+                updateRangeText();
+
+            }
+
+        );
+ 
+ 
+        /* =================================================
+
+           TO DATE CHANGE
+
+           ================================================= */
+ 
+        toDate.addEventListener(
+
+            "change",
+
+            function () {
+ 
+                if (
+
+                    fromDate.value &&
+
+                    toDate.value &&
+
+                    toDate.value <
+
+                    fromDate.value
+
+                ) {
+ 
+                    alert(
+
+                        "To Date cannot be earlier than From Date."
+
+                    );
+ 
+ 
+                    toDate.value =
+
+                        fromDate.value;
+
+                }
+ 
+ 
+                updateRangeText();
+
+            }
+
+        );
+ 
+ 
+        /* =================================================
+
+           INITIAL MIN DATE
+
+           ================================================= */
+ 
+        toDate.min =
+
+            fromDate.value;
+ 
+ 
+        /* =================================================
+
+           INITIAL DISPLAY
+
+           ================================================= */
+ 
+        updateRangeText();
+ 
+ 
+        /* =================================================
+
+           APPLY DATE RANGE
+
+           ================================================= */
+ 
+        window.applyDateRange =
+
+            function () {
+ 
+                console.log(
+
+                    "Apply Date Range clicked"
+
+                );
+ 
+ 
+                /* Check both dates */
+ 
+                if (
+
+                    !fromDate.value ||
+
+                    !toDate.value
+
+                ) {
+ 
+                    alert(
+
+                        "Please select both From Date and To Date."
+
+                    );
+ 
+                    return;
+
+                }
+ 
+ 
+                /* Validate date order */
+ 
+                if (
+
+                    toDate.value <
+
+                    fromDate.value
+
+                ) {
+ 
+                    alert(
+
+                        "To Date cannot be earlier than From Date."
+
+                    );
+ 
+                    return;
+
+                }
+ 
+ 
+                /* Get selected dates */
+ 
+                const selectedFromDate =
+
+                    fromDate.value;
+ 
+                const selectedToDate =
+
+                    toDate.value;
+ 
+ 
+                /* Store globally */
+ 
+                window.dashboardFromDate =
+
+                    selectedFromDate;
+ 
+                window.dashboardToDate =
+
+                    selectedToDate;
+ 
+ 
+                /* Update selected period */
+ 
+                updateRangeText();
+ 
+ 
+                /* Console */
+ 
+                console.log(
+
+                    "From Date:",
+
+                    selectedFromDate
+
+                );
+ 
+                console.log(
+
+                    "To Date:",
+
+                    selectedToDate
+
+                );
+ 
+ 
+                /* =================================================
+
+                   CUSTOM EVENT
+
+                   ================================================= */
+ 
+                document.dispatchEvent(
+
+                    new CustomEvent(
+
+                        "dashboardDateRangeChanged",
 
                         {
 
-                            name: "Cost",
+                            detail: {
 
-                            data: chartData,
+                                fromDate:
 
-                            colors:
-                                costCompositionColors
+                                    selectedFromDate,
+ 
+                                toDate:
+
+                                    selectedToDate
+
+                            }
+
                         }
-                    ]
+
+                    )
+
+                );
+ 
+ 
+                /* =================================================
+
+                   APPLY BUTTON FEEDBACK
+
+                   ================================================= */
+ 
+                const button =
+
+                    dashboard.querySelector(
+
+                        ".date-apply-btn"
+
+                    );
+ 
+ 
+                if (button) {
+ 
+                    const originalText =
+
+                        button.textContent;
+ 
+ 
+                    button.textContent =
+
+                        "Applied ✓";
+ 
+ 
+                    setTimeout(
+
+                        function () {
+ 
+                            button.textContent =
+
+                                originalText;
+ 
+                        },
+
+                        1500
+
+                    );
+
                 }
-            );
+ 
+            };
+ 
+ 
+ 
+ 
+        /* =================================================
 
+           CLEAR DATE RANGE
 
-        /* =====================================================
-           CENTER TOTAL
-           ===================================================== */
+           ================================================= */
+ 
+        window.clearDateRange =
 
-        addCostCompositionCenterText(
-            chart,
-            totalCost
-        );
-
-
-        /* =====================================================
-           CUSTOM LEGEND
-           ===================================================== */
-
-        renderCostCompositionLegend(
-            chartData,
-            totalCost
-        );
-    }
-
-
-    /* =========================================================
-       ADD CENTER TEXT
-       ========================================================= */
-
-    function addCostCompositionCenterText(
-        chart,
-        totalCost
-    ) {
-
-        if (!chart) {
-            return;
-        }
-
-
-        const centerGroup =
-            chart.renderer
-                .g("cost-center-group")
-                .add();
-
-
-        const totalLabel =
-            chart.renderer
-                .text(
-                    "Total Cost",
-                    0,
-                    0
-                )
-                .css({
-
-                    fontSize: "13px",
-
-                    fontWeight: "500",
-
-                    color: "#6b7280"
-                })
-                .add(centerGroup);
-
-
-        const totalValue =
-            chart.renderer
-                .text(
-                    Highcharts.numberFormat(
-                        totalCost,
-                        2
-                    ) + " M",
-                    0,
-                    0
-                )
-                .css({
-
-                    fontSize: "20px",
-
-                    fontWeight: "700",
-
-                    color: "#111827"
-                })
-                .add(centerGroup);
-
-
-        function positionCenterText() {
-
-            const centerX =
-                chart.plotLeft +
-                chart.plotWidth / 2;
-
-
-            const centerY =
-                chart.plotTop +
-                chart.plotHeight / 2;
-
-
-            const labelBox =
-                totalLabel.getBBox();
-
-            const valueBox =
-                totalValue.getBBox();
-
-
-            totalLabel.attr({
-
-                x:
-                    centerX -
-                    labelBox.width / 2,
-
-                y:
-                    centerY - 4
-            });
-
-
-            totalValue.attr({
-
-                x:
-                    centerX -
-                    valueBox.width / 2,
-
-                y:
-                    centerY + 20
-            });
-        }
-
-
-        positionCenterText();
-
-
-        Highcharts.addEvent(
-            chart,
-            "redraw",
             function () {
+ 
+                console.log(
 
-                positionCenterText();
-            }
-        );
+                    "Clear Date Range clicked"
+
+                );
+ 
+ 
+                /* =============================================
+
+                   CLEAR FROM DATE
+
+                   ============================================= */
+ 
+                fromDate.value = "";
+ 
+ 
+                /* =============================================
+
+                   CLEAR TO DATE
+
+                   ============================================= */
+ 
+                toDate.value = "";
+ 
+ 
+                /* =============================================
+
+                   REMOVE MINIMUM DATE
+
+                   ============================================= */
+ 
+                toDate.removeAttribute(
+
+                    "min"
+
+                );
+ 
+ 
+                /* =============================================
+
+                   RESET SELECTED PERIOD TEXT
+
+                   ============================================= */
+ 
+                rangeText.textContent =
+
+                    "Select dates";
+ 
+ 
+                /* =============================================
+
+                   CLEAR GLOBAL VALUES
+
+                   ============================================= */
+ 
+                window.dashboardFromDate =
+
+                    null;
+ 
+                window.dashboardToDate =
+
+                    null;
+ 
+ 
+                /* =============================================
+
+                   SEND CLEAR EVENT
+
+                   ============================================= */
+ 
+                document.dispatchEvent(
+
+                    new CustomEvent(
+
+                        "dashboardDateRangeChanged",
+
+                        {
+
+                            detail: {
+
+                                fromDate: null,
+
+                                toDate: null
+
+                            }
+
+                        }
+
+                    )
+
+                );
+ 
+ 
+                /* =============================================
+
+                   CONSOLE
+
+                   ============================================= */
+ 
+                console.log(
+
+                    "Date range cleared successfully."
+
+                );
+ 
+ 
+                /* =============================================
+
+                   CLEAR BUTTON FEEDBACK
+
+                   ============================================= */
+ 
+                const clearButton =
+
+                    dashboard.querySelector(
+
+                        ".date-clear-btn"
+
+                    );
+ 
+ 
+                if (clearButton) {
+ 
+                    const originalText =
+
+                        clearButton.textContent;
+ 
+ 
+                    clearButton.textContent =
+
+                        "Cleared ✓";
+ 
+ 
+                    setTimeout(
+
+                        function () {
+ 
+                            clearButton.textContent =
+
+                                originalText;
+ 
+                        },
+
+                        1200
+
+                    );
+
+                }
+ 
+            };
+ 
     }
+ 
+ 
+    /* =====================================================
 
+       VARIABLES
 
-    /* =========================================================
-       CUSTOM LEGEND
-       ========================================================= */
+       ===================================================== */
+ 
+    let dashboardData = null;
+ 
+    let reportLink = "";
+ 
+ 
+    /* =====================================================
 
-    function renderCostCompositionLegend(
-        chartData,
-        totalCost
+       GET KPI ELEMENT
+
+       ===================================================== */
+ 
+    function getKpiElement(dataName) {
+ 
+        return dashboard.querySelector(
+
+            '.kpi-value[data-value="' +
+
+            dataName +
+
+            '"]'
+
+        );
+ 
+    }
+ 
+ 
+    /* =====================================================
+
+       SET KPI VALUE
+
+       ===================================================== */
+ 
+    function setKpiValue(
+
+        dataName,
+
+        value
+
     ) {
+ 
+        const element =
 
-        const legend =
-            document.getElementById(
-                "costCompositionLegend"
+            getKpiElement(dataName);
+ 
+ 
+        if (!element) {
+ 
+            console.warn(
+
+                "KPI element not found:",
+
+                dataName
+
             );
-
-
-        if (!legend) {
+ 
             return;
+ 
         }
+ 
+ 
+        element.textContent =
 
-
-        legend.innerHTML = "";
-
-
-        chartData.forEach(
-            function (item, index) {
-
-                const row =
-                    document.createElement(
-                        "div"
-                    );
-
-
-                row.className =
-                    "cost-legend-row";
-
-
-                const left =
-                    document.createElement(
-                        "div"
-                    );
-
-
-                left.className =
-                    "cost-legend-left";
-
-
-                const dot =
-                    document.createElement(
-                        "span"
-                    );
-
-
-                dot.className =
-                    "cost-legend-dot";
-
-
-                dot.style.backgroundColor =
-                    costCompositionColors[
-                        index %
-                        costCompositionColors.length
-                    ];
-
-
-                const name =
-                    document.createElement(
-                        "span"
-                    );
-
-
-                name.className =
-                    "cost-legend-name";
-
-
-                name.textContent =
-                    item.name;
-
-
-                left.appendChild(dot);
-                left.appendChild(name);
-
-
-                const right =
-                    document.createElement(
-                        "div"
-                    );
-
-
-                right.className =
-                    "cost-legend-right";
-
-
-                const value =
-                    document.createElement(
-                        "span"
-                    );
-
-
-                value.className =
-                    "cost-legend-value";
-
-
-                value.textContent =
-                    Highcharts.numberFormat(
-                        item.y,
-                        2
-                    ) + " M";
-
-
-                const percentage =
-                    totalCost > 0
-                        ? (
-                            item.y /
-                            totalCost *
-                            100
-                        )
-                        : 0;
-
-
-                const percent =
-                    document.createElement(
-                        "span"
-                    );
-
-
-                percent.className =
-                    "cost-legend-percent";
-
-
-                percent.textContent =
-                    Highcharts.numberFormat(
-                        percentage,
-                        1
-                    ) + "%";
-
-
-                right.appendChild(value);
-                right.appendChild(percent);
-
-
-                row.appendChild(left);
-                row.appendChild(right);
-
-
-                legend.appendChild(row);
-            }
-        );
+            formatNumber(value);
+ 
     }
+ 
+ 
+    /* =====================================================
 
+       CONVERT VALUE TO NUMBER
 
-    /* =========================================================
-       DATE RANGE CHANGE EVENT
-       ========================================================= */
+       ===================================================== */
+ 
+    function toNumber(value) {
+ 
+        if (
 
-    document.addEventListener(
-        "dashboardDateRangeChanged",
-        function (event) {
+            value === null ||
 
-            console.log(
-                "Cost chart date event:",
-                event.detail
-            );
+            value === undefined ||
 
+            value === ""
 
-            if (
-                !event.detail ||
-                !event.detail.fromDate ||
-                !event.detail.toDate
-            ) {
+        ) {
+ 
+            return 0;
+ 
+        }
+ 
+ 
+        const cleaned =
 
-                clearCostCompositionChart();
+            String(value)
 
-                return;
+                .replace(/,/g, "")
+
+                .replace(/[^\d.-]/g, "");
+ 
+ 
+        const number =
+
+            parseFloat(cleaned);
+ 
+ 
+        if (isNaN(number)) {
+ 
+            return 0;
+ 
+        }
+ 
+ 
+        return number;
+ 
+    }
+ 
+ 
+    /* =====================================================
+
+       FORMAT NUMBER
+
+       ===================================================== */
+ 
+    function formatNumber(value) {
+ 
+        const number =
+
+            toNumber(value);
+ 
+ 
+        return number.toLocaleString(
+
+            "en-US",
+
+            {
+
+                minimumFractionDigits: 2,
+
+                maximumFractionDigits: 2
+
             }
 
+        );
+ 
+    }
+ 
+ 
+    /* =====================================================
 
-            loadCostCompositionChart();
+       LOAD SUMMARY CARD DATA
+
+       ===================================================== */
+ 
+    function loadSummaryCards() {
+ 
+        const params = {
+ 
+            adsNames: [
+
+                "summary_cards_plugin"
+
+            ],
+ 
+            refreshCache: false,
+ 
+            sqlParams: {},
+ 
+            props: {
+ 
+                ADS: true,
+ 
+                pageno: 1,
+ 
+                pagesize: 500
+ 
+            }
+ 
+        };
+ 
+ 
+        const caller =
+
+            (
+
+                typeof parent !== "undefined" &&
+
+                parent.GetDataFromAxList
+
+            )
+
+                ? parent
+
+                : window;
+ 
+ 
+        console.log(
+
+            "Calling summary_cards_plugin..."
+
+        );
+ 
+ 
+        if (
+
+            typeof caller.GetDataFromAxList !==
+
+            "function"
+
+        ) {
+ 
+            console.error(
+
+                "GetDataFromAxList is not available."
+
+            );
+ 
+            return;
+ 
         }
+ 
+ 
+        caller.GetDataFromAxList(
+ 
+            params,
+ 
+ 
+            /* =================================================
+
+               SUCCESS
+
+               ================================================= */
+ 
+            function (resp) {
+ 
+                try {
+ 
+                    console.log(
+
+                        "summary_cards_plugin RAW response:",
+
+                        resp
+
+                    );
+ 
+ 
+                    /* =========================================
+
+                       PARSE RESPONSE
+
+                       ========================================= */
+ 
+                    let parsed = resp;
+ 
+ 
+                    if (
+
+                        typeof parsed ===
+
+                        "string"
+
+                    ) {
+ 
+                        parsed =
+
+                            JSON.parse(parsed);
+ 
+                    }
+ 
+ 
+                    /* =========================================
+
+                       AXPERT d RESPONSE
+
+                       ========================================= */
+ 
+                    if (
+
+                        parsed &&
+
+                        parsed.d &&
+
+                        typeof parsed.d ===
+
+                        "string"
+
+                    ) {
+ 
+                        parsed =
+
+                            JSON.parse(
+
+                                parsed.d
+
+                            );
+ 
+                    }
+ 
+ 
+                    console.log(
+
+                        "summary_cards_plugin PARSED:",
+
+                        parsed
+
+                    );
+ 
+ 
+                    /* =========================================
+
+                       GET DATA
+
+                       ========================================= */
+ 
+                    let listRaw = [];
+ 
+ 
+                    if (
+
+                        parsed &&
+
+                        parsed.result &&
+
+                        Array.isArray(
+
+                            parsed.result.data
+
+                        )
+
+                    ) {
+ 
+                        parsed.result.data.forEach(
+
+                            function (item) {
+ 
+                                if (
+
+                                    item &&
+
+                                    Array.isArray(
+
+                                        item.data
+
+                                    )
+
+                                ) {
+ 
+                                    listRaw =
+
+                                        listRaw.concat(
+
+                                            item.data
+
+                                        );
+ 
+                                }
+ 
+                            }
+
+                        );
+ 
+                    }
+ 
+ 
+                    console.log(
+
+                        "summary_cards_plugin DATA:",
+
+                        listRaw
+
+                    );
+ 
+ 
+                    /* =========================================
+
+                       CHECK DATA
+
+                       ========================================= */
+ 
+                    if (
+
+                        listRaw.length === 0
+
+                    ) {
+ 
+                        console.warn(
+
+                            "summary_cards_plugin returned no rows."
+
+                        );
+ 
+                        return;
+ 
+                    }
+ 
+ 
+                    /* =========================================
+
+                       FIRST SUMMARY ROW
+
+                       ========================================= */
+ 
+                    dashboardData =
+
+                        listRaw[0];
+ 
+ 
+                    console.log(
+
+                        "SUMMARY ROW:",
+
+                        dashboardData
+
+                    );
+ 
+ 
+                    /* =========================================
+
+                       SCAS REPORT LINK
+
+                       ========================================= */
+ 
+                    reportLink =
+
+                        dashboardData.link ||
+
+                        "";
+ 
+ 
+                    /* =========================================
+
+                       DEBUG DATA
+
+                       ========================================= */
+ 
+                    console.log(
+
+                        "Name:",
+
+                        dashboardData.name
+
+                    );
+ 
+                    console.log(
+
+                        "Link:",
+
+                        dashboardData.link
+
+                    );
+ 
+                    console.log(
+
+                        "Total M/C Quantity:",
+
+                        dashboardData[
+
+                            "Total M/C Quantity"
+
+                        ]
+
+                    );
+ 
+                    console.log(
+
+                        "Total FCV:",
+
+                        dashboardData[
+
+                            "Total FCV"
+
+                        ]
+
+                    );
+ 
+                    console.log(
+
+                        "Total CONTRIBUTION:",
+
+                        dashboardData[
+
+                            "Total CONTRIBUTION"
+
+                        ]
+
+                    );
+ 
+                    console.log(
+
+                        "Total Cost:",
+
+                        dashboardData[
+
+                            "Total Cost"
+
+                        ]
+
+                    );
+ 
+                    console.log(
+
+                        "Revenue:",
+
+                        dashboardData[
+
+                            "Revenue"
+
+                        ]
+
+                    );
+ 
+                    console.log(
+
+                        "TEA QTY:",
+
+                        dashboardData[
+
+                            "TEA QTY"
+
+                        ]
+
+                    );
+ 
+                    console.log(
+
+                        "EXRATE:",
+
+                        dashboardData[
+
+                            "EXRATE"
+
+                        ]
+
+                    );
+ 
+ 
+                    /* =========================================
+
+                       UPDATE DASHBOARD
+
+                       ========================================= */
+ 
+                    updateDashboardCards(
+
+                        dashboardData
+
+                    );
+ 
+ 
+                } catch (e) {
+ 
+                    console.error(
+
+                        "summary_cards_plugin parse failed:",
+
+                        e
+
+                    );
+ 
+                }
+ 
+            },
+ 
+ 
+            /* =================================================
+
+               ERROR
+
+               ================================================= */
+ 
+            function (err) {
+ 
+                console.error(
+
+                    "summary_cards_plugin failed:",
+
+                    err
+
+                );
+ 
+            }
+ 
+        );
+ 
+    }
+ 
+ 
+    /* =====================================================
+
+       UPDATE DASHBOARD CARDS
+
+       ===================================================== */
+ 
+    function updateDashboardCards(data) {
+ 
+ 
+        /* =================================================
+
+           TOTAL M/C QUANTITY
+
+           ================================================= */
+ 
+        const mcQuantity =
+
+            data[
+
+                "Total M/C Quantity"
+
+            ];
+ 
+ 
+        setKpiValue(
+
+            "Total M/C Quantity",
+
+            mcQuantity
+
+        );
+ 
+ 
+        /* =================================================
+
+           TEA QTY
+
+           ================================================= */
+ 
+        const teaQty =
+
+            data[
+
+                "TEA QTY"
+
+            ];
+ 
+ 
+        setKpiValue(
+
+            "TEA QTY",
+
+            teaQty
+
+        );
+ 
+ 
+        /* =================================================
+
+           SALES VALUE
+
+           LKR = Revenue
+
+           USD = Total FCV
+
+           ================================================= */
+ 
+        updateCurrency("LKR");
+ 
+ 
+        /* =================================================
+
+           TOTAL COST
+
+           ================================================= */
+ 
+        const totalCost =
+
+            data[
+
+                "Total Cost"
+
+            ];
+ 
+ 
+        setKpiValue(
+
+            "Total Cost",
+
+            totalCost
+
+        );
+ 
+ 
+        /* =================================================
+
+           TOTAL PROFIT / LOSS
+
+           ================================================= */
+ 
+        const contribution =
+
+            data[
+
+                "Total CONTRIBUTION"
+
+            ];
+ 
+ 
+        setKpiValue(
+
+            "Total CONTRIBUTION",
+
+            contribution
+
+        );
+ 
+ 
+        /* =================================================
+
+           TOTAL FCV
+
+           ================================================= */
+ 
+        const totalFCV =
+
+            data[
+
+                "Total FCV"
+
+            ];
+ 
+ 
+        console.log(
+
+            "Total FCV:",
+
+            totalFCV
+
+        );
+ 
+ 
+        console.log(
+
+            "Dashboard updated successfully."
+
+        );
+ 
+    }
+ 
+ 
+    /* =====================================================
+
+       UPDATE CURRENCY
+
+       ===================================================== */
+ 
+    function updateCurrency(currency) {
+ 
+        if (!dashboardData) {
+ 
+            return;
+ 
+        }
+ 
+ 
+        const salesValue =
+
+            getKpiElement(
+
+                "Sales Value"
+
+            );
+ 
+ 
+        const totalCost =
+
+            getKpiElement(
+
+                "Total Cost"
+
+            );
+ 
+ 
+        const contribution =
+
+            getKpiElement(
+
+                "Total CONTRIBUTION"
+
+            );
+ 
+ 
+        const lkrButton =
+
+            dashboard.querySelector(
+
+                '[data-currency="LKR"]'
+
+            );
+ 
+ 
+        const usdButton =
+
+            dashboard.querySelector(
+
+                '[data-currency="USD"]'
+
+            );
+ 
+ 
+        /* =================================================
+
+           VALUES
+
+           ================================================= */
+ 
+        const revenue =
+
+            toNumber(
+
+                dashboardData[
+
+                    "Revenue"
+
+                ]
+
+            );
+ 
+ 
+        const totalFCV =
+
+            toNumber(
+
+                dashboardData[
+
+                    "Total FCV"
+
+                ]
+
+            );
+ 
+ 
+        const totalCostLKR =
+
+            toNumber(
+
+                dashboardData[
+
+                    "Total Cost"
+
+                ]
+
+            );
+ 
+ 
+        const contributionLKR =
+
+            toNumber(
+
+                dashboardData[
+
+                    "Total CONTRIBUTION"
+
+                ]
+
+            );
+ 
+ 
+        const exchangeRate =
+
+            toNumber(
+
+                dashboardData[
+
+                    "EXRATE"
+
+                ]
+
+            ) || 1;
+ 
+ 
+        const totalCostUSD =
+
+            totalCostLKR /
+
+            exchangeRate;
+ 
+ 
+        const contributionUSD =
+
+            contributionLKR /
+
+            exchangeRate;
+ 
+ 
+        /* =================================================
+
+           USD
+
+           ================================================= */
+ 
+        if (currency === "USD") {
+ 
+ 
+            /* Sales Value */
+ 
+            if (salesValue) {
+ 
+                salesValue.textContent =
+
+                    formatNumber(
+
+                        totalFCV
+
+                    );
+ 
+            }
+ 
+ 
+            /* Total Cost */
+ 
+            if (totalCost) {
+ 
+                totalCost.textContent =
+
+                    formatNumber(
+
+                        totalCostUSD
+
+                    );
+ 
+            }
+ 
+ 
+            /* Profit / Loss */
+ 
+            if (contribution) {
+ 
+                contribution.textContent =
+
+                    formatNumber(
+
+                        contributionUSD
+
+                    );
+ 
+            }
+ 
+ 
+            /* Active USD */
+ 
+            if (usdButton) {
+ 
+                usdButton.classList.add(
+
+                    "active"
+
+                );
+ 
+            }
+ 
+ 
+            if (lkrButton) {
+ 
+                lkrButton.classList.remove(
+
+                    "active"
+
+                );
+ 
+            }
+ 
+        }
+ 
+ 
+        /* =================================================
+
+           LKR
+
+           ================================================= */
+ 
+        else {
+ 
+ 
+            /* Sales Value */
+ 
+            if (salesValue) {
+ 
+                salesValue.textContent =
+
+                    formatNumber(
+
+                        revenue
+
+                    );
+ 
+            }
+ 
+ 
+            /* Total Cost */
+ 
+            if (totalCost) {
+ 
+                totalCost.textContent =
+
+                    formatNumber(
+
+                        totalCostLKR
+
+                    );
+ 
+            }
+ 
+ 
+            /* Profit / Loss */
+ 
+            if (contribution) {
+ 
+                contribution.textContent =
+
+                    formatNumber(
+
+                        contributionLKR
+
+                    );
+ 
+            }
+ 
+ 
+            /* Active LKR */
+ 
+            if (lkrButton) {
+ 
+                lkrButton.classList.add(
+
+                    "active"
+
+                );
+ 
+            }
+ 
+ 
+            if (usdButton) {
+ 
+                usdButton.classList.remove(
+
+                    "active"
+
+                );
+ 
+            }
+ 
+        }
+ 
+    }
+ 
+ 
+    /* =====================================================
+
+       CURRENCY BUTTONS
+
+       ===================================================== */
+ 
+    const currencyButtons =
+
+        dashboard.querySelectorAll(
+
+            ".currency-option"
+
+        );
+ 
+ 
+    currencyButtons.forEach(
+
+        function (button) {
+ 
+            button.addEventListener(
+
+                "click",
+
+                function () {
+ 
+                    const currency =
+
+                        button.dataset.currency;
+ 
+ 
+                    updateCurrency(
+
+                        currency
+
+                    );
+ 
+                }
+
+            );
+ 
+        }
+
     );
+ 
+ 
+    /* =====================================================
 
+       SCAS REPORT
 
-    /* =========================================================
-       INITIAL LOAD
-       ========================================================= */
+       ===================================================== */
+ 
+    const scasCard =
 
+        dashboard.querySelector(
+
+            '[data-kpi="scas-report"]'
+
+        );
+ 
+ 
+    if (scasCard) {
+ 
+        scasCard.addEventListener(
+
+            "click",
+
+            function () {
+ 
+                if (!reportLink) {
+ 
+                    console.warn(
+
+                        "SCAS Report link not available."
+
+                    );
+ 
+                    return;
+ 
+                }
+ 
+ 
+                console.log(
+
+                    "Opening SCAS Report:",
+
+                    reportLink
+
+                );
+ 
+ 
+                if (
+
+                    typeof navigateToUrl ===
+
+                    "function"
+
+                ) {
+ 
+                    navigateToUrl(
+
+                        reportLink
+
+                    );
+ 
+                } else {
+ 
+                    window.open(
+
+                        reportLink,
+
+                        "_blank"
+
+                    );
+ 
+                }
+ 
+            }
+
+        );
+ 
+    }
+ 
+ 
+    /* =====================================================
+
+       KPI CARD HOVER
+
+       ===================================================== */
+ 
+    const kpiCards =
+
+        dashboard.querySelectorAll(
+
+            ".kpi-card"
+
+        );
+ 
+ 
+    kpiCards.forEach(
+
+        function (card) {
+ 
+            card.addEventListener(
+
+                "mouseenter",
+
+                function () {
+ 
+                    card.classList.add(
+
+                        "active"
+
+                    );
+ 
+                }
+
+            );
+ 
+ 
+            card.addEventListener(
+
+                "mouseleave",
+
+                function () {
+ 
+                    card.classList.remove(
+
+                        "active"
+
+                    );
+ 
+                }
+
+            );
+ 
+        }
+
+    );
+ 
+ 
+    /* =====================================================
+
+       LOAD DATA
+
+       ===================================================== */
+ 
     loadSummaryCards();
+ 
+ 
+    /* =====================================================
 
-    loadCostCompositionChart();
+       DASHBOARD READY
 
-
-    /* =========================================================
-       INITIALIZATION COMPLETE
-       ========================================================= */
-
+       ===================================================== */
+ 
     console.log(
-        "Dashboard initialized successfully."
-    );
 
+        "Dashboard initialized successfully."
+
+    );
+ 
 });
 
-
-
-
-
-
-
-
+ 
 

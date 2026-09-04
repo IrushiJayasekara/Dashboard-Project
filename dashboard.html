@@ -16,7 +16,8 @@
 	
 	
 	
-	<link type="text/css" rel="stylesheet" href="../../adamuat/HTMLPages/Css/style.css_1788349826054.css?v=1788455508523">
+	
+	<link type="text/css" rel="stylesheet" href="../../adamuat/HTMLPages/Css/style.css_1788349826054.css?v=1788497364997">
 </head>
 
 <body>
@@ -296,35 +297,52 @@
     <!-- =================================================
          DASHBOARD ROW
          ================================================= -->
-    <div class="dashboard-row">
+<div class="dashboard-row">
 
-        <!-- =================================================
-             COST COMPOSITION CHART
-             ================================================= -->
-        <div class="chart-card cost-composition-card">
+    <!-- =================================================
+         EXISTING COST COMPOSITION CHART
+         DO NOT CHANGE THIS
+         ================================================= -->
+    <div class="chart-card cost-composition-card">
 
-            <!-- CHART TITLE -->
-            <div class="chart-card-title">
-                Cost Composition (Total Cost)
+        <div class="chart-card-title">
+            Cost Composition (Total Cost)
+        </div>
+
+        <div class="cost-composition-body">
+
+            <div class="cost-chart-wrapper">
+                <div id="costCompositionChart"></div>
             </div>
 
-            <!-- CHART BODY -->
-            <div class="cost-composition-body">
-
-                <!-- DONUT CHART -->
-                <div class="cost-chart-wrapper">
-                    <div id="costCompositionChart"></div>
-                </div>
-
-                <!-- CUSTOM LEGEND -->
-                <div id="costCompositionLegend" class="cost-composition-legend">
-                </div>
-
+            <div id="costCompositionLegend" class="cost-composition-legend">
             </div>
 
         </div>
 
     </div>
+
+
+    <!-- =================================================
+         NEW: REVENUE VS COST VS CONTRIBUTION BY BUYER
+         ================================================= -->
+    <div class="chart-card buyer-performance-card">
+
+        <div class="buyer-performance-title">
+            Revenue vs Cost vs Contribution by Buyer
+        </div>
+
+        <div class="buyer-performance-chart-wrapper">
+
+            <div id="buyerPerformanceChart"></div>
+
+        </div>
+
+    </div>
+
+</div>
+  
+  
 
 </div>
   
@@ -344,7 +362,23 @@
 
 <!-- Your Dashboard JavaScript -->
 
+  
+
 	
 
-	<script type="text/javascript" src="../../adamuat/HTMLPages/Js/script.js_1788349826054.js?v=1788455508524"></script>
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	<script type="text/javascript" src="../../adamuat/HTMLPages/Js/script.js_1788349826054.js?v=1788497364999"></script>
 </body></html>
