@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /* =========================================================
        DEFAULT DATE RANGE
-       Last 30 days
+       Last 180 days
        ========================================================= */
 
     if (fromDate && toDate && rangeText) {
@@ -83,7 +83,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const previousMonth = new Date(
             today.getFullYear(),
             today.getMonth(),
-            today.getDate() - 30
+            today.getDate() - 180
         );
 
         if (!fromDate.value) {
@@ -3534,18 +3534,5 @@ loadBuyerPerformanceChart();
     );
 
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
