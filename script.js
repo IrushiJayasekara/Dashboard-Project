@@ -950,8 +950,26 @@ console.log("========================================");
                            Report link
                            ----------------------------------------- */
 
-                        reportLink =
-                            dashboardData.link || "";
+                      reportLink =
+    dashboardData["link"] ||
+    dashboardData["Link"] ||
+    "";
+
+const reportName =
+    dashboardData["name"] ||
+    dashboardData["Name"] ||
+    "SCAS Report";
+
+
+console.log(
+    "SCAS Report Name:",
+    reportName
+);
+
+console.log(
+    "SCAS Report Link:",
+    reportLink
+);
 
 
                         /* -----------------------------------------
@@ -1120,29 +1138,29 @@ function getSummaryValue(item, fieldName) {
         }
 
 
-        /* =====================================================
-           SALES
-           ===================================================== */
+  /* =====================================================
+   SALES
+   ===================================================== */
 
-        let salesValue = 0;
-
-
-        if (currency === "USD") {
-
-            salesValue =
-                toNumber(
-                    dashboardData["Total FCV"]
-                );
-
-        } else {
-
-            salesValue =
-                toNumber(
-                    dashboardData["Revenue"]
-                );
-        }
+let salesValue =
+    toNumber(
+        dashboardData["Revenue"]
+    );
 
 
+if (currency === "USD") {
+
+    const exchangeRate =
+        toNumber(
+            dashboardData["EXRATE"]
+        );
+
+    if (exchangeRate > 0) {
+
+        salesValue =
+            salesValue / exchangeRate;
+    }
+}   
         setKpiValue(
             "Sales Value",
             formatNumber(
@@ -1261,44 +1279,73 @@ function getSummaryValue(item, fieldName) {
        SCAS REPORT
        ========================================================= */
 
-    const scasCard =
-        document.querySelector(
-            '[data-kpi="scas-report"]'
-        );
+/* =========================================================
+   SCAS REPORT
+   ========================================================= */
+
+const scasCard =
+    document.querySelector(
+        '[data-kpi="scas-report"]'
+    );
 
 
-    if (scasCard) {
+if (scasCard) {
 
-        scasCard.addEventListener(
-            "click",
-            function () {
+    scasCard.addEventListener(
+        "click",
+        function () {
 
-                if (!reportLink) {
+            if (!reportLink) {
 
-                    console.warn(
-                        "SCAS report link is not available."
-                    );
+                console.warn(
+                    "SCAS report link is not available."
+                );
 
-                    return;
-                }
-
-
-                if (
-                    typeof navigateToUrl === "function"
-                ) {
-
-                    navigateToUrl(reportLink);
-
-                } else {
-
-                    window.open(
-                        reportLink,
-                        "_blank"
-                    );
-                }
+                return;
             }
-        );
-    }
+
+
+            console.log(
+                "Opening SCAS Report:",
+                reportLink
+            );
+
+
+            /* =================================================
+               AXPERT NAVIGATION
+               ================================================= */
+
+            if (
+                typeof navigateToUrl === "function"
+            ) {
+
+                navigateToUrl(
+                    reportLink
+                );
+
+                return;
+            }
+
+
+            if (
+                typeof parent !== "undefined" &&
+                typeof parent.navigateToUrl === "function"
+            ) {
+
+                parent.navigateToUrl(
+                    reportLink
+                );
+
+                return;
+            }
+
+
+            console.error(
+                "navigateToUrl function is not available."
+            );
+        }
+    );
+}
 
 
     /* =========================================================
@@ -3487,6 +3534,8 @@ loadBuyerPerformanceChart();
     );
 
 });
+
+
 
 
 
