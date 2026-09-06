@@ -628,6 +628,132 @@ document.addEventListener("DOMContentLoaded", function () {
        ========================================================= */
 
     function loadSummaryCards() {
+      
+          /* =====================================================
+       GET SELECTED DATE RANGE
+       ===================================================== */
+
+    const dateFromElement =
+        document.querySelector(".from-date");
+
+    const dateToElement =
+        document.querySelector(".to-date");
+
+
+    if (
+        !dateFromElement ||
+        !dateToElement
+    ) {
+
+        console.error(
+            "Summary card date elements not found."
+        );
+
+        return;
+    }
+
+
+    const rawFromDate =
+        dateFromElement.value;
+
+    const rawToDate =
+        dateToElement.value;
+
+
+    if (
+        !rawFromDate ||
+        !rawToDate
+    ) {
+
+        console.warn(
+            "Summary cards require a valid date range."
+        );
+
+        return;
+    }
+
+
+    /* =====================================================
+       FORMAT DATE
+       yyyy-mm-dd → mm/dd/yyyy
+       ===================================================== */
+
+/* =====================================================
+   FORMAT DATE FOR SUMMARY CARD DATA SOURCE
+   -----------------------------------------------------
+   HTML date:
+   yyyy-mm-dd
+
+   Data source expects:
+   mm/dd/yy
+   ===================================================== */
+
+const fromParts =
+    rawFromDate.split("-");
+
+const toParts =
+    rawToDate.split("-");
+
+
+const fdate =
+    fromParts.length === 3
+        ? fromParts[1] + "/" +
+          fromParts[2] + "/" +
+          fromParts[0]
+        : rawFromDate;
+
+
+const todate =
+    toParts.length === 3
+        ? toParts[1] + "/" +
+          toParts[2] + "/" +
+          toParts[0]
+        : rawToDate;
+      
+      
+/* =====================================================
+   SUMMARY CARD DATE DEBUG
+   ===================================================== */
+
+console.log("========================================");
+console.log("SUMMARY CARD DATE DEBUG");
+console.log("========================================");
+
+console.log(
+    "Raw From Date:",
+    rawFromDate
+);
+
+console.log(
+    "Raw To Date:",
+    rawToDate
+);
+
+console.log(
+    "Formatted fdate:",
+    fdate
+);
+
+console.log(
+    "Formatted todate:",
+    todate
+);
+
+console.log(
+    "Expected format: mm/dd/yy"
+);
+
+console.log("========================================");
+
+    console.log(
+        "Summary Card From Date:",
+        fdate
+    );
+
+    console.log(
+        "Summary Card To Date:",
+        todate
+    );
 
         if (
             typeof GetDataFromAxList !== "function" &&
@@ -645,15 +771,18 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
 
-        const params = {
+const params = {
 
-            adsNames: [
-                "summary_cards_plugin"
-            ],
+    adsNames: [
+        "summary_card_with_daterange"
+    ],
 
-            refreshCache: false,
+    refreshCache: false,
 
-            sqlParams: {},
+    sqlParams: {
+        fdate: fdate,
+        todate: todate
+    },
 
             props: {
                 ADS: true,
@@ -661,6 +790,42 @@ document.addEventListener("DOMContentLoaded", function () {
                 pagesize: 500
             }
         };
+      
+      
+      /* =====================================================
+   AXPERT SUMMARY CARD PARAMETER DEBUG
+   ===================================================== */
+
+console.log("========================================");
+console.log("SUMMARY CARD AXPERT PARAMETERS");
+console.log("=================================");
+
+console.log(
+    "Data Source:",
+    params.adsNames[0]
+);
+
+console.log(
+    "fdate sent:",
+    params.sqlParams.fdate
+);
+
+console.log(
+    "todate sent:",
+    params.sqlParams.todate
+);
+
+console.log(
+    "Full sqlParams:",
+    params.sqlParams
+);
+
+console.log(
+    "Full params:",
+    params
+);
+
+console.log("========================================");
 
 
         const caller =
@@ -677,10 +842,16 @@ document.addEventListener("DOMContentLoaded", function () {
             caller.GetDataFromAxList(
                 params,
                 function (response) {
-
+        console.log("========================================");
+        console.log("SUMMARY CARD RAW RESPONSE");
+        console.log("========================================");
+        console.log("Raw response:", response);
+        console.log("Response type:", typeof response);
+                  
                     try {
 
                         let parsed = response;
+                      console.log("Parsed response BEFORE parsing:", parsed);
 
 
                         /* -----------------------------------------
@@ -760,6 +931,17 @@ document.addEventListener("DOMContentLoaded", function () {
                             return;
                         }
 
+                      console.log("========================================");
+console.log("SUMMARY CARD RESULT DATA");
+console.log("========================================");
+console.log("resultData:", resultData);
+console.log("Number of rows:", resultData.length);
+console.log("First row:", resultData[0]);
+console.log(
+    "First row keys:",
+    Object.keys(resultData[0])
+);
+console.log("========================================");
 
                         dashboardData = resultData[0];
 
@@ -799,6 +981,73 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+  
+  /* =========================================================
+   GET SUMMARY VALUE
+   ---------------------------------------------------------
+   Handles exact/lowercase Axpert field names
+   ========================================================= */
+
+function getSummaryValue(item, fieldName) {
+
+    if (!item) {
+        return 0;
+    }
+
+
+    /* Exact match */
+    if (
+        item[fieldName] !== undefined &&
+        item[fieldName] !== null &&
+        item[fieldName] !== ""
+    ) {
+
+        return item[fieldName];
+    }
+
+
+    /* Case-insensitive match */
+    const target =
+        fieldName.toLowerCase();
+
+
+    const key =
+        Object.keys(item).find(
+            function (itemKey) {
+
+                return (
+                    itemKey.toLowerCase() === target
+                );
+            }
+        );
+
+
+    if (key) {
+
+        console.log(
+            "Summary field matched:",
+            fieldName,
+            "→",
+            key,
+            "=",
+            item[key]
+        );
+
+        return item[key];
+    }
+
+
+    console.warn(
+        "Summary field not found:",
+        fieldName,
+        "Available fields:",
+        Object.keys(item)
+    );
+
+
+    return 0;
+}
+
 
     /* =========================================================
        UPDATE DASHBOARD CARDS
@@ -806,43 +1055,58 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function updateDashboardCards(item) {
 
-        if (!item) {
-            return;
-        }
-
-
-        /* =====================================================
-           TOTAL M/C QUANTITY
-           ===================================================== */
-
-        setKpiValue(
-            "Total M/C Quantity",
-            formatNumber(
-                item["Total M/C Quantity"],
-                0
-            )
+    if (!item) {
+        console.warn(
+            "updateDashboardCards: item is empty."
         );
-
-
-        /* =====================================================
-           TEA QTY
-           ===================================================== */
-
-        setKpiValue(
-            "TEA QTY",
-            formatNumber(
-                item["TEA QTY"],
-                0
-            )
-        );
-
-
-        /* =====================================================
-           SALES VALUE
-           ===================================================== */
-
-        updateCurrency("LKR");
+        return;
     }
+
+
+    console.log(
+        "Updating summary cards with:",
+        item
+    );
+
+
+    /* =====================================================
+       TOTAL M/C QUANTITY
+       ===================================================== */
+
+    setKpiValue(
+        "Total M/C Quantity",
+        formatNumber(
+            getSummaryValue(
+                item,
+                "Total M/C Quantity"
+            ),
+            0
+        )
+    );
+
+
+    /* =====================================================
+       TEA QTY
+       ===================================================== */
+
+    setKpiValue(
+        "TEA QTY",
+        formatNumber(
+            getSummaryValue(
+                item,
+                "TEA QTY"
+            ),
+            0
+        )
+    );
+
+
+    /* =====================================================
+       SALES / COST / CONTRIBUTION
+       ===================================================== */
+
+    updateCurrency("LKR");
+}
 
 
     /* =========================================================
@@ -3181,7 +3445,13 @@ function renderBuyerPerformanceChart(
             return;
         }
 
+        /* =====================================================
+           SUMMARY CARDS
+           -----------------------------------------------------
+           Reload using selected date range
+           ===================================================== */
 
+        loadSummaryCards();
         /* =====================================================
            EXISTING COST COMPOSITION CHART
            ===================================================== */
@@ -3217,6 +3487,12 @@ loadBuyerPerformanceChart();
     );
 
 });
+
+
+
+
+
+
 
 
 

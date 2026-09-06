@@ -568,6 +568,489 @@
     }
 }
 
+/* =========================================================
+   COST COMPOSITION CHART
+   ========================================================= */
+
+.dashboard .chart-card {
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-sizing: border-box;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
+
+
+/* =========================================================
+   COST COMPOSITION CARD
+   ========================================================= */
+
+.dashboard .cost-composition-card {
+    margin-top: 10px;
+    min-height: 490px;
+    padding: 28px 30px;
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   CHART TITLE
+   ========================================================= */
+
+.dashboard .chart-card-title {
+    font-size: 20px;
+    line-height: 26px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 10px;
+}
+
+
+/* =========================================================
+   CHART BODY
+   ========================================================= */
+
+.dashboard .cost-composition-body {
+    width: 100%;
+    min-height: 350px;
+
+    display: flex;
+    align-items: center;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   DONUT CHART AREA
+   ========================================================= */
+
+.dashboard .cost-chart-wrapper {
+    width: 55%;
+    height: 350px;
+
+    min-width: 0;
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* =========================================================
+   HIGHCHART CONTAINER
+   ========================================================= */
+
+.dashboard #costCompositionChart {
+    width: 100%;
+    height: 350px;
+}
+
+
+/* =========================================================
+   CUSTOM LEGEND
+   ========================================================= */
+
+.dashboard .cost-composition-legend {
+    width: 45%;
+
+    padding-left: 25px;
+    padding-right: 10px;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   LEGEND ROW
+   IMPORTANT:
+   JS creates only 2 children:
+      1. cost-legend-left
+      2. cost-legend-right
+   Therefore use FLEX here.
+   ========================================================= */
+
+.dashboard .cost-legend-row {
+    width: 100%;
+
+    min-height: 31px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   LEGEND LEFT SIDE
+   DOT + NAME
+   ========================================================= */
+
+.dashboard .cost-legend-left {
+    min-width: 0;
+
+    flex: 1;
+
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
+    padding-right: 12px;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   LEGEND DOT
+   ========================================================= */
+
+.dashboard .cost-legend-dot {
+    width: 10px;
+    height: 10px;
+
+    min-width: 10px;
+
+    border-radius: 50%;
+
+    display: block;
+}
+
+
+/* =========================================================
+   LEGEND NAME
+   ========================================================= */
+
+.dashboard .cost-legend-name {
+    min-width: 0;
+
+    font-size: 13px;
+    line-height: 18px;
+
+    color: #111827;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+/* =========================================================
+   LEGEND RIGHT SIDE
+   VALUE + PERCENTAGE
+   ========================================================= */
+
+.dashboard .cost-legend-right {
+    width: 155px;
+
+    min-width: 155px;
+
+    display: grid;
+
+    grid-template-columns: 95px 55px;
+
+    column-gap: 5px;
+
+    align-items: center;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   LEGEND VALUE
+   ========================================================= */
+
+.dashboard .cost-legend-value {
+    font-size: 13px;
+
+    color: #111827;
+
+    text-align: right;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   LEGEND PERCENTAGE
+   ========================================================= */
+
+.dashboard .cost-legend-percent {
+    font-size: 13px;
+
+    color: #475569;
+
+    text-align: right;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   TABLE-LIKE ALIGNMENT
+   ========================================================= */
+
+.dashboard .cost-legend-value,
+.dashboard .cost-legend-percent {
+    font-variant-numeric: tabular-nums;
+}
+
+
+/* =========================================================
+   MOBILE / SMALL SCREEN
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .dashboard .cost-composition-card {
+        padding: 22px;
+    }
+
+    .dashboard .cost-composition-body {
+        flex-direction: column;
+
+        min-height: auto;
+    }
+
+    .dashboard .cost-chart-wrapper {
+        width: 100%;
+        height: 360px;
+    }
+
+    .dashboard #costCompositionChart {
+        width: 100%;
+        height: 360px;
+    }
+
+    .dashboard .cost-composition-legend {
+        width: 100%;
+
+        padding-left: 10px;
+        padding-right: 10px;
+
+        margin-top: 10px;
+    }
+
+    .dashboard .cost-legend-right {
+        width: 155px;
+        min-width: 155px;
+    }
+}
+
+
+/* =========================================================
+   VERY SMALL SCREEN
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+    .dashboard .cost-composition-card {
+        padding: 16px;
+    }
+
+    .dashboard .chart-card-title {
+        font-size: 17px;
+        line-height: 22px;
+    }
+
+    .dashboard .cost-chart-wrapper {
+        height: 300px;
+    }
+
+    .dashboard #costCompositionChart {
+        height: 300px;
+    }
+
+    .dashboard .cost-legend-row {
+        min-height: 29px;
+    }
+
+    .dashboard .cost-legend-name,
+    .dashboard .cost-legend-value,
+    .dashboard .cost-legend-percent {
+        font-size: 11px;
+    }
+
+    .dashboard .cost-legend-right {
+        width: 125px;
+        min-width: 125px;
+
+        grid-template-columns: 75px 45px;
+
+        column-gap: 5px;
+    }
+}
+
+/* =========================================================
+   COST COMPOSITION LEGEND CLICK / TOGGLE
+   ========================================================= */
+
+/* Make legend items clickable */
+.dashboard .cost-legend-row {
+    cursor: pointer;
+    transition: opacity 0.2s ease, background-color 0.2s ease;
+}
+
+/* Small hover effect */
+.dashboard .cost-legend-row:hover {
+    background: #f8fafc;
+    border-radius: 5px;
+}
+
+/* Disabled / hidden cost item */
+.dashboard .cost-legend-row.cost-legend-disabled {
+    opacity: 0.75;
+}
+
+/* Disabled item name */
+.dashboard .cost-legend-row.cost-legend-disabled .cost-legend-name {
+    color: #9ca3af;
+}
+
+/* Disabled item value */
+.dashboard .cost-legend-row.cost-legend-disabled .cost-legend-value {
+    color: #9ca3af;
+}
+
+/* Disabled item percentage */
+.dashboard .cost-legend-row.cost-legend-disabled .cost-legend-percent {
+    color: #9ca3af;
+}
+
+/* Disabled item dot */
+.dashboard .cost-legend-row.cost-legend-disabled .cost-legend-dot {
+    background-color: #cbd5e1 !important;
+}
+
+/* =========================================================
+   REVENUE VS COST VS CONTRIBUTION BY BUYER
+   NEW CHART - ADDITIVE ONLY
+   ========================================================= */
+
+.dashboard .buyer-performance-card {
+    width: 100%;
+    height: 490px;
+    min-height: 490px;
+    max-height: 490px;
+
+    background: #ffffff;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+
+    box-sizing: border-box;
+
+    box-shadow:
+        0 2px 8px rgba(15, 23, 42, 0.04);
+
+    padding: 28px 30px;
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   TITLE
+   ========================================================= */
+
+.dashboard .buyer-performance-title {
+    font-size: 20px;
+    line-height: 26px;
+
+    font-weight: 700;
+
+    color: #111827;
+
+    margin-bottom: 10px;
+}
+
+
+/* =========================================================
+   CHART WRAPPER
+   ========================================================= */
+
+.dashboard .buyer-performance-chart-wrapper {
+    width: 100%;
+    height: 410px;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   HIGHCHART CONTAINER
+   ========================================================= */
+
+.dashboard #buyerPerformanceChart {
+    width: 100%;
+    height: 410px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .dashboard .buyer-performance-card {
+        height: 460px;
+        min-height: 460px;
+        max-height: 460px;
+        padding: 22px;
+    }
+
+    .dashboard .buyer-performance-chart-wrapper {
+        height: 380px;
+    }
+
+    .dashboard #buyerPerformanceChart {
+        height: 380px;
+    }
+}
+
+
+/* =========================================================
+   SMALL SCREEN
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+    .dashboard .buyer-performance-card {
+        height: 420px;
+        min-height: 420px;
+        max-height: 420px;
+        padding: 16px;
+    }
+
+    .dashboard .buyer-performance-title {
+        font-size: 17px;
+        line-height: 22px;
+    }
+
+    .dashboard .buyer-performance-chart-wrapper {
+        height: 350px;
+    }
+
+    .dashboard #buyerPerformanceChart {
+        height: 350px;
+    }
+}
+/* =========================================================
+   ALIGN BUYER PERFORMANCE CARD WITH COST COMPOSITION CARD
+   ========================================================= */
+
+.dashboard .buyer-performance-card {
+    margin-top: 10px;
+}
 
 
 
